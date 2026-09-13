@@ -29,6 +29,7 @@ describe('ApplicationsPageComponent', () => {
     company: { id: 4, name: 'Northstar Labs' },
     position: 'Angular Developer',
     status: 'applied',
+    board_order: 1,
     work_mode: 'remote',
     employment_type: 'full-time',
     source_url: null,

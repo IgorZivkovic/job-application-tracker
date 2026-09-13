@@ -132,6 +132,7 @@
 }
 
 .column-content {
+  flex: 1;
   min-height: 185px;
   padding: 0.7rem;
   display: grid;
@@ -140,6 +141,7 @@
 }
 
 .application-card {
+  position: relative;
   min-width: 0;
   padding: 0.85rem;
   display: grid;
@@ -148,6 +150,53 @@
   border: 1px solid #e1e7f0;
   border-radius: 0.7rem;
   box-shadow: 0 5px 14px rgba(24, 39, 75, 0.05);
+}
+
+.application-card > div:first-of-type {
+  padding-right: 1.45rem;
+}
+
+.drag-handle {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.45rem;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 0.4rem;
+  background: transparent;
+  color: #98a2b3;
+  cursor: grab;
+}
+
+.drag-handle:hover,
+.drag-handle:focus-visible {
+  background: #edf3fb;
+  color: var(--app-primary);
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.drag-handle mat-icon {
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
+  line-height: 18px;
+}
+
+.application-card.cdk-drag-preview {
+  box-sizing: border-box;
+  opacity: 0.95;
+  box-shadow: 0 16px 32px rgba(24, 39, 75, 0.2);
+}
+
+.application-card.cdk-drag-placeholder {
+  opacity: 0.25;
 }
 
 .application-title {

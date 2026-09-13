@@ -16,6 +16,7 @@ describe('ApplicationDialogComponent', () => {
     company: companies[0],
     position: 'Angular Developer',
     status: 'applied',
+    board_order: 1,
     work_mode: 'remote',
     employment_type: 'full-time',
     source_url: 'https://northstar.example.com/jobs/angular',

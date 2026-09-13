@@ -56,6 +56,9 @@
     <app-application-board
       [applications]="boardApplications()"
       [totalApplications]="boardTotal()"
+      [movePending]="movePending()"
+      [announcement]="moveAnnouncement()"
+      (applicationMove)="moveApplication($event)"
     />
   }
 </main>

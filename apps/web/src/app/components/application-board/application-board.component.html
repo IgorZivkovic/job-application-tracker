@@ -14,7 +14,9 @@
     </p>
   }
 
-  <div class="board" aria-label="Applications grouped by status">
+  <p class="visually-hidden" aria-live="polite" aria-atomic="true">{{ announcement() }}</p>
+
+  <div class="board" cdkDropListGroup cdkScrollable aria-label="Applications grouped by status">
     @for (column of columns(); track column.status) {
       <section class="board-column" [attr.aria-labelledby]="column.status + '-column-title'">
         <header class="column-header">
@@ -30,9 +32,31 @@
           </span>
         </header>
 
-        <div class="column-content">
+        <div
+          class="column-content"
+          cdkDropList
+          [cdkDropListData]="column"
+          [cdkDropListDisabled]="movePending()"
+          (cdkDropListDropped)="drop($event)"
+        >
           @for (application of column.applications; track application.id) {
-            <article class="application-card">
+            <article
+              class="application-card"
+              cdkDrag
+              [cdkDragData]="application"
+              [cdkDragDisabled]="movePending()"
+            >
+              <button
+                class="drag-handle"
+                cdkDragHandle
+                type="button"
+                [attr.aria-label]="'Move ' + application.position"
+                title="Drag to move"
+              >
+                <mat-icon fontSet="material-symbols-outlined" aria-hidden="true"
+                  >drag_indicator</mat-icon
+                >
+              </button>
               <div>
                 <a class="application-title" [routerLink]="['/applications', application.id]">
                   {{ application.position }}

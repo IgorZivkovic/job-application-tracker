@@ -21,6 +21,7 @@ export type {
   JobApplicationDetail,
   JobApplicationFilters,
   JobApplicationPayload,
+  MoveJobApplicationPayload,
   JobApplicationSortField,
   JobApplicationStatus,
   JobApplicationStatusCounts,

@@ -8,6 +8,7 @@ import {
   JobApplicationDetail,
   JobApplicationFilters,
   JobApplicationPayload,
+  MoveJobApplicationPayload,
   UpdateJobApplicationPayload,
 } from '../models/job-tracker.model';
 import { ApiErrorService } from './api-error.service';
@@ -56,6 +57,15 @@ export class JobApplicationService {
       map((response) => response.data),
       catchError((error) => this.errors.handle(error, 'Failed to update the application.')),
     );
+  }
+
+  move(id: number, payload: MoveJobApplicationPayload): Observable<JobApplication> {
+    return this.http
+      .patch<DataResponse<JobApplication>>(`${this.endpoint}/${id}/move`, payload)
+      .pipe(
+        map((response) => response.data),
+        catchError((error) => this.errors.handle(error, 'Failed to move the application.')),
+      );
   }
 
   remove(id: number): Observable<DeleteResponse> {

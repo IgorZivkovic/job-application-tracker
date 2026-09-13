@@ -109,6 +109,14 @@ class ReadJobApplicationsTest extends TestCase
             ->assertJsonPath('data.0.id', $alpha->id)
             ->assertJsonPath('data.1.id', $zebra->id);
 
+        $zebra->update(['board_order' => 1]);
+        $alpha->update(['board_order' => 2]);
+
+        $this->getJson('/api/v1/job-applications?sort=board_order&direction=asc')
+            ->assertOk()
+            ->assertJsonPath('data.0.id', $zebra->id)
+            ->assertJsonPath('data.1.id', $alpha->id);
+
         $this->getJson('/api/v1/job-applications?sort=company.name&direction=sideways')
             ->assertUnprocessable()
             ->assertJsonPath('errorCode', 'VALIDATION_ERROR')

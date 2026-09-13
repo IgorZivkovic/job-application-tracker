@@ -53,6 +53,10 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
         ->middlewareFor('update', Authorize::using('update', 'company'))
         ->middlewareFor('destroy', Authorize::using('delete', 'company'));
 
+    Route::patch('/job-applications/{job_application}/move', [JobApplicationController::class, 'move'])
+        ->middleware(['auth:sanctum', Authorize::using('update', 'job_application')])
+        ->name('job-applications.move');
+
     Route::apiResource('job-applications', JobApplicationController::class)
         ->middleware('auth:sanctum')
         ->middlewareFor('index', Authorize::using('viewAny', JobApplication::class))

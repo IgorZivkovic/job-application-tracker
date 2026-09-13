@@ -7,6 +7,7 @@ use App\Enums\InterviewType;
 use App\Enums\JobApplicationStatus;
 use App\Enums\WorkMode;
 use App\Models\AuthUser;
+use App\Models\JobApplication;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use RuntimeException;
@@ -55,6 +56,23 @@ class JobTrackerSeeder extends Seeder
                     }
                 }
             }
+
+            $this->normalizeBoardOrder($account);
+        }
+    }
+
+    private function normalizeBoardOrder(AuthUser $account): void
+    {
+        foreach (JobApplicationStatus::cases() as $status) {
+            JobApplication::query()
+                ->ownedBy($account)
+                ->where('status', $status)
+                ->orderBy('board_order')
+                ->orderBy('id')
+                ->pluck('id')
+                ->each(static function (int $id, int $index): void {
+                    JobApplication::query()->whereKey($id)->update(['board_order' => $index + 1]);
+                });
         }
     }
 

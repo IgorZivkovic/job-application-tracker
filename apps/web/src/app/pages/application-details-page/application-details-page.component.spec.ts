@@ -48,6 +48,7 @@ describe('ApplicationDetailsPageComponent', () => {
     company: { id: 4, name: 'Northstar Labs' },
     position: 'Angular Developer',
     status: 'interview',
+    board_order: 1,
     work_mode: 'remote',
     employment_type: 'full-time',
     source_url: 'https://northstar.example.com/jobs/angular',

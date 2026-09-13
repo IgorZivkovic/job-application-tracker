@@ -28,6 +28,7 @@ class JobTrackerDatabaseSchemaTest extends TestCase
             'company_id',
             'position',
             'status',
+            'board_order',
             'work_mode',
             'employment_type',
             'source_url',

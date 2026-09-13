@@ -17,7 +17,10 @@ describe('DashboardPageComponent', () => {
   let fixture: ComponentFixture<DashboardPageComponent>;
   let component: DashboardPageComponent;
   let dashboardService: { get: ReturnType<typeof vi.fn> };
-  let applicationService: { list: ReturnType<typeof vi.fn> };
+  let applicationService: {
+    list: ReturnType<typeof vi.fn>;
+    move: ReturnType<typeof vi.fn>;
+  };
 
   const jobApplication = application();
   const dashboard: JobTrackerDashboard = {
@@ -36,7 +39,10 @@ describe('DashboardPageComponent', () => {
 
   beforeEach(async () => {
     dashboardService = { get: vi.fn(() => of(dashboard)) };
-    applicationService = { list: vi.fn(() => of(page([jobApplication], 4))) };
+    applicationService = {
+      list: vi.fn(() => of(page([jobApplication], 4))),
+      move: vi.fn(() => of(jobApplication)),
+    };
     const lastError = signal<ApiOperationError | null>(null);
 
     await TestBed.configureTestingModule({
@@ -62,8 +68,8 @@ describe('DashboardPageComponent', () => {
     expect(applicationService.list).toHaveBeenCalledWith({
       page: 1,
       per_page: 100,
-      sort: 'created_at',
-      direction: 'desc',
+      sort: 'board_order',
+      direction: 'asc',
     });
     expect(component.dashboard()).toEqual(dashboard);
     expect(component.boardApplications()).toEqual([jobApplication]);
@@ -83,6 +89,63 @@ describe('DashboardPageComponent', () => {
     expect(fixture.nativeElement.querySelector('[role="alert"]')).not.toBeNull();
     expect(fixture.nativeElement.textContent).toContain('Dashboard could not be loaded');
   });
+
+  it('optimistically moves a card and keeps dashboard counts in sync', () => {
+    const moved = { ...jobApplication, status: 'offer' as const, board_order: 1 };
+    applicationService.move.mockReturnValueOnce(of(moved));
+
+    component.moveApplication({
+      application: jobApplication,
+      previousStatus: 'applied',
+      status: 'offer',
+      previousIndex: 0,
+      targetIndex: 0,
+    });
+
+    expect(applicationService.move).toHaveBeenCalledWith(jobApplication.id, {
+      status: 'offer',
+      target_index: 0,
+    });
+    expect(component.boardApplications()[0].status).toBe('offer');
+    expect(component.dashboard()?.applications_by_status.applied).toBe(0);
+    expect(component.dashboard()?.applications_by_status.offer).toBe(1);
+    expect(component.moveAnnouncement()).toContain('moved to Offer');
+  });
+
+  it('restores the previous board and counts when a move fails', () => {
+    applicationService.move.mockReturnValueOnce(throwError(() => new Error('Offline')));
+
+    component.moveApplication({
+      application: jobApplication,
+      previousStatus: 'applied',
+      status: 'offer',
+      previousIndex: 0,
+      targetIndex: 0,
+    });
+
+    expect(component.boardApplications()).toEqual([jobApplication]);
+    expect(component.dashboard()).toEqual(dashboard);
+    expect(component.moveAnnouncement()).toContain('previous order was restored');
+  });
+
+  it('reorders cards within the same status without changing summary counts', () => {
+    const second = { ...jobApplication, id: 13, position: 'Second', board_order: 2 };
+    const third = { ...jobApplication, id: 14, position: 'Third', board_order: 3 };
+    component.boardApplications.set([jobApplication, second, third]);
+    applicationService.move.mockReturnValueOnce(of({ ...third, board_order: 1 }));
+
+    component.moveApplication({
+      application: third,
+      previousStatus: 'applied',
+      status: 'applied',
+      previousIndex: 2,
+      targetIndex: 0,
+    });
+
+    expect(component.boardApplications().map(({ id }) => id)).toEqual([14, 12, 13]);
+    expect(component.boardApplications().map(({ board_order }) => board_order)).toEqual([1, 2, 3]);
+    expect(component.dashboard()?.applications_by_status.applied).toBe(1);
+  });
 });
 
 function application(): JobApplication {
@@ -92,6 +155,7 @@ function application(): JobApplication {
     company: { id: 4, name: 'Northstar Labs' },
     position: 'Angular Developer',
     status: 'applied',
+    board_order: 1,
     work_mode: 'remote',
     employment_type: 'full-time',
     source_url: null,

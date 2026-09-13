@@ -14,6 +14,7 @@ describe('JobApplicationService', () => {
     company: { id: 4, name: 'Northstar Labs' },
     position: 'Angular Developer',
     status: 'applied',
+    board_order: 1,
     work_mode: 'remote',
     employment_type: 'full-time',
     source_url: null,
@@ -105,6 +106,12 @@ describe('JobApplicationService', () => {
     expect(updateRequest.request.method).toBe('PATCH');
     expect(updateRequest.request.body).toEqual({ status: 'interview' });
     updateRequest.flush({ data: { ...application, status: 'interview' } });
+
+    service.move(application.id, { status: 'offer', target_index: 2 }).subscribe();
+    const moveRequest = http.expectOne(`/api/v1/job-applications/${application.id}/move`);
+    expect(moveRequest.request.method).toBe('PATCH');
+    expect(moveRequest.request.body).toEqual({ status: 'offer', target_index: 2 });
+    moveRequest.flush({ data: { ...application, status: 'offer', board_order: 3 } });
 
     service.remove(application.id).subscribe();
     const deleteRequest = http.expectOne(`/api/v1/job-applications/${application.id}`);

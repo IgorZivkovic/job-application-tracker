@@ -23,6 +23,7 @@ class JobApplicationResource extends JsonResource
             ],
             'position' => $this->position,
             'status' => $this->status->value,
+            'board_order' => $this->board_order,
             'work_mode' => $this->work_mode->value,
             'employment_type' => $this->employment_type,
             'source_url' => $this->source_url,

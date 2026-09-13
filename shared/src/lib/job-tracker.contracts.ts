@@ -16,6 +16,7 @@ export const INTERVIEW_OUTCOMES = ['passed', 'failed', 'cancelled'] as const;
 export const JOB_APPLICATION_SORT_FIELDS = [
   'position',
   'status',
+  'board_order',
   'work_mode',
   'applied_at',
   'next_action_at',
@@ -49,6 +50,7 @@ export interface JobApplication {
   company: CompanySummary;
   position: string;
   status: JobApplicationStatus;
+  board_order: number;
   work_mode: WorkMode;
   employment_type: string | null;
   source_url: string | null;
@@ -114,6 +116,11 @@ export interface JobApplicationPayload {
 }
 
 export type UpdateJobApplicationPayload = Partial<JobApplicationPayload>;
+
+export interface MoveJobApplicationPayload {
+  status: JobApplicationStatus;
+  target_index: number;
+}
 
 export interface InterviewPayload {
   type: InterviewType;

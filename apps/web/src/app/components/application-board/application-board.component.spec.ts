@@ -42,6 +42,28 @@ describe('ApplicationBoardComponent', () => {
     expect(component.isTruncated()).toBe(true);
     expect(fixture.nativeElement.textContent).toContain('Showing the first 2 of 120 applications');
   });
+
+  it('emits the exact source and target position after a drop', () => {
+    const applied = component.columns().find(({ status }) => status === 'applied')!;
+    const offer = component.columns().find(({ status }) => status === 'offer')!;
+    const emit = vi.spyOn(component.applicationMove, 'emit');
+
+    component.drop({
+      previousContainer: { data: applied },
+      container: { data: offer },
+      previousIndex: 0,
+      currentIndex: 1,
+      item: { data: applied.applications[0] },
+    } as never);
+
+    expect(emit).toHaveBeenCalledWith({
+      application: applied.applications[0],
+      previousStatus: 'applied',
+      status: 'offer',
+      previousIndex: 0,
+      targetIndex: 1,
+    });
+  });
 });
 
 function application(status: JobApplication['status'], id = 1): JobApplication {
@@ -51,6 +73,7 @@ function application(status: JobApplication['status'], id = 1): JobApplication {
     company: { id: 4, name: 'Northstar Labs' },
     position: id === 1 ? 'Frontend Developer' : 'Product Engineer',
     status,
+    board_order: id,
     work_mode: 'remote',
     employment_type: 'full-time',
     source_url: null,

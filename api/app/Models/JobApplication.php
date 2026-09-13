@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 #[Fillable([
     'position',
     'status',
+    'board_order',
     'work_mode',
     'employment_type',
     'source_url',
@@ -53,6 +54,7 @@ class JobApplication extends Model
     {
         return [
             'status' => JobApplicationStatus::class,
+            'board_order' => 'integer',
             'work_mode' => WorkMode::class,
             'applied_at' => 'date:Y-m-d',
             'next_action_at' => 'datetime',

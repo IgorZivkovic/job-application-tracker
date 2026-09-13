@@ -8,7 +8,7 @@ A portfolio-oriented full-stack application for organizing companies, job applic
 - Private Job Tracker data scoped to the authenticated account
 - Company, job application, and interview CRUD workflows
 - Six-stage application pipeline: saved, applied, interview, offer, rejected, and withdrawn
-- Dashboard totals, recent applications, upcoming interviews, and a Kanban-style status board
+- Dashboard totals, recent applications, upcoming interviews, and a persistent drag-and-drop Kanban board
 - Server-side search, filtering, whitelisted sorting, and Laravel pagination
 - URL-backed list state, so filters and pages survive a browser refresh
 - Structured request validation and consistent API error responses
@@ -21,6 +21,10 @@ A portfolio-oriented full-stack application for organizing companies, job applic
 ### Dashboard and pipeline summary
 
 ![Job Tracker dashboard with application status totals, recent activity, and upcoming interviews](docs/screenshots/dashboard.png)
+
+### Persistent Kanban drag and drop
+
+![Application card being dragged to an exact position in another pipeline column](docs/screenshots/dashboard-drag-and-drop.png)
 
 ### Application search and filters
 
@@ -176,6 +180,7 @@ The `users` rows are not login accounts and are intentionally independent from `
 
 1. Sign in with either demo account.
 2. Review application totals, recent activity, upcoming interviews, and the status board on the dashboard.
+   Drag a card within a column or into another status to persist its exact board position.
 3. Add companies before creating applications associated with them.
 4. Search or filter applications by status, work mode, or company, and sort supported columns.
 5. Open an application to update its details and schedule, edit, or remove interviews.
@@ -223,6 +228,7 @@ All REST endpoints use the `/api/v1` prefix except Sanctum's CSRF endpoint.
 | `GET/PUT/PATCH/DELETE` | `/api/v1/companies/{company}`                                       | Manage an owned company                   |
 | `GET/POST`             | `/api/v1/job-applications`                                          | List/filter or create owned applications  |
 | `GET/PUT/PATCH/DELETE` | `/api/v1/job-applications/{job_application}`                        | Manage an owned application               |
+| `PATCH`                | `/api/v1/job-applications/{job_application}/move`                   | Reorder or change an application status   |
 | `GET/POST`             | `/api/v1/job-applications/{job_application}/interviews`             | List or schedule interviews               |
 | `PUT/PATCH/DELETE`     | `/api/v1/job-applications/{job_application}/interviews/{interview}` | Update or remove an interview             |
 | `GET/POST`             | `/api/v1/users`                                                     | List users; administrator creates         |

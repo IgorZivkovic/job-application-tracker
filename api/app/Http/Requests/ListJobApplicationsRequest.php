@@ -31,6 +31,7 @@ class ListJobApplicationsRequest extends FormRequest
                 Rule::in([
                     'position',
                     'status',
+                    'board_order',
                     'work_mode',
                     'applied_at',
                     'next_action_at',
