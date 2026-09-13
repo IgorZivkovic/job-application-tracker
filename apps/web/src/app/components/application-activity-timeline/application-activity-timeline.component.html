@@ -1,0 +1,103 @@
+<section class="activity-card" aria-labelledby="activity-title">
+  <header class="section-header">
+    <div>
+      <h2 id="activity-title">Application activity</h2>
+      <p>Status changes, interview updates, and dated follow-up notes.</p>
+    </div>
+  </header>
+
+  <form class="comment-form" (submit)="$event.preventDefault(); addComment()">
+    <label for="activity-comment">Add a follow-up note</label>
+    <div class="comment-controls">
+      <textarea
+        id="activity-comment"
+        rows="3"
+        maxlength="2000"
+        placeholder="For example: Sent a follow-up email and will check back on Friday."
+        [value]="commentDraft()"
+        [disabled]="commentSaving()"
+        [attr.aria-invalid]="commentError() ? true : null"
+        [attr.aria-describedby]="commentError() ? 'activity-comment-error' : null"
+        (input)="updateCommentDraft($any($event.target).value)"
+      ></textarea>
+      <button mat-flat-button type="submit" [disabled]="commentSaving() || !commentDraft().trim()">
+        {{ commentSaving() ? 'Adding...' : 'Add note' }}
+      </button>
+    </div>
+    @if (commentError()) {
+      <p id="activity-comment-error" class="field-error" role="alert">{{ commentError() }}</p>
+    }
+  </form>
+
+  <p class="visually-hidden" aria-live="polite">{{ announcement() }}</p>
+
+  @if (loading() && activities().length === 0) {
+    <div class="activity-state" aria-live="polite">
+      <mat-progress-bar mode="indeterminate" />
+      <p>Loading activity...</p>
+    </div>
+  } @else if (loadError() && activities().length === 0) {
+    <div class="activity-state activity-error" role="alert">
+      <mat-icon fontSet="material-symbols-outlined">warning</mat-icon>
+      <p>{{ loadError() }}</p>
+      <button mat-stroked-button type="button" (click)="retryLoad()">Try again</button>
+    </div>
+  } @else if (activities().length === 0) {
+    <div class="activity-state">
+      <mat-icon fontSet="material-symbols-outlined">history</mat-icon>
+      <p>No activity has been recorded yet.</p>
+    </div>
+  } @else {
+    @if (loading()) {
+      <mat-progress-bar
+        class="activity-refresh"
+        mode="indeterminate"
+        aria-label="Refreshing activity"
+      />
+    }
+    <ol class="activity-list" aria-label="Application activity timeline">
+      @for (activity of activities(); track activity.id) {
+        <li class="activity-item" [attr.data-activity-type]="activity.type">
+          <span class="activity-icon" aria-hidden="true">
+            <mat-icon fontSet="material-symbols-outlined">{{
+              activityIcon(activity.type)
+            }}</mat-icon>
+          </span>
+          <article>
+            <h3>{{ activityTitle(activity) }}</h3>
+            <p class="activity-description">{{ activityDescription(activity) }}</p>
+            <p class="activity-meta">
+              <span>{{ activity.actor?.email || 'System' }}</span>
+              <span aria-hidden="true">·</span>
+              <time
+                [attr.datetime]="activity.occurred_at"
+                [attr.title]="activity.occurred_at | date: 'medium'"
+              >
+                {{ relativeTime(activity.occurred_at) }}
+              </time>
+            </p>
+          </article>
+        </li>
+      }
+    </ol>
+
+    @if (loadError()) {
+      <div class="activity-pagination-error" role="alert">
+        <span>{{ loadError() }}</span>
+        <button mat-button type="button" (click)="retryLoad()">Try again</button>
+      </div>
+    }
+
+    @if (hasOlderActivity()) {
+      <button
+        mat-stroked-button
+        class="load-older"
+        type="button"
+        [disabled]="loadingMore()"
+        (click)="loadActivities(false)"
+      >
+        {{ loadingMore() ? 'Loading...' : 'Load older activity' }}
+      </button>
+    }
+  }
+</section>

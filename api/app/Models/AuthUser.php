@@ -22,6 +22,11 @@ class AuthUser extends Authenticatable
         return $this->hasMany(Company::class);
     }
 
+    public function applicationActivities(): HasMany
+    {
+        return $this->hasMany(ApplicationActivity::class, 'actor_auth_user_id');
+    }
+
     /**
      * Get the attributes that should be cast.
      *

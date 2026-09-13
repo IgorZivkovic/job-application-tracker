@@ -5,14 +5,20 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreInterviewRequest;
 use App\Http\Requests\UpdateInterviewRequest;
 use App\Http\Resources\InterviewResource;
+use App\Models\AuthUser;
 use App\Models\Interview;
 use App\Models\JobApplication;
+use App\Services\ApplicationActivityRecorder;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
 class InterviewController extends Controller
 {
+    public function __construct(private readonly ApplicationActivityRecorder $activityRecorder) {}
+
     /**
      * List interviews for an owned job application.
      *
@@ -37,7 +43,14 @@ class InterviewController extends Controller
         StoreInterviewRequest $request,
         JobApplication $jobApplication,
     ): JsonResponse {
-        $interview = $jobApplication->interviews()->create($request->validated());
+        /** @var AuthUser $authUser */
+        $authUser = $request->user();
+        $interview = DB::transaction(function () use ($authUser, $jobApplication, $request): Interview {
+            $interview = $jobApplication->interviews()->create($request->validated());
+            $this->activityRecorder->recordInterviewScheduled($jobApplication, $interview, $authUser);
+
+            return $interview;
+        });
 
         return (new InterviewResource($interview))
             ->response()
@@ -54,7 +67,19 @@ class InterviewController extends Controller
         JobApplication $jobApplication,
         Interview $interview,
     ): InterviewResource {
-        $interview->update($request->validated());
+        /** @var AuthUser $authUser */
+        $authUser = $request->user();
+
+        DB::transaction(function () use ($authUser, $interview, $jobApplication, $request): void {
+            $before = $this->activityRecorder->interviewSnapshot($interview);
+            $interview->update($request->validated());
+            $this->activityRecorder->recordInterviewChanges(
+                $jobApplication,
+                $interview->refresh(),
+                $authUser,
+                $before,
+            );
+        });
 
         return new InterviewResource($interview->refresh());
     }
@@ -65,10 +90,17 @@ class InterviewController extends Controller
      * The interview must belong to the application in the URL.
      */
     public function destroy(
+        Request $request,
         JobApplication $jobApplication,
         Interview $interview,
     ): JsonResponse {
-        $interview->delete();
+        /** @var AuthUser $authUser */
+        $authUser = $request->user();
+
+        DB::transaction(function () use ($authUser, $interview, $jobApplication): void {
+            $this->activityRecorder->recordInterviewDeleted($jobApplication, $interview, $authUser);
+            $interview->delete();
+        });
 
         return response()->json(['deleted' => true]);
     }

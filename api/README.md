@@ -2,7 +2,7 @@
 
 Laravel REST API for the repository's Job Application Tracker.
 
-It provides Sanctum session authentication, account-scoped companies and job applications, nested interview management, dashboard summaries, the original role-based user-management module, and generated OpenAPI documentation.
+It provides Sanctum session authentication, account-scoped companies and job applications, nested interview management, immutable application activity timelines, dashboard summaries, the original role-based user-management module, and generated OpenAPI documentation.
 
 Setup instructions, demo credentials, endpoint tables, and the backend migration history are maintained in the [root README](../README.md).
 

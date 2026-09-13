@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,6 +10,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
+import { ApplicationActivityTimelineComponent } from '../../components/application-activity-timeline/application-activity-timeline.component';
 import {
   InterviewDialogComponent,
   InterviewDialogMode,
@@ -33,6 +34,7 @@ type DetailLoadState = 'loading' | 'ready' | 'not-found' | 'forbidden' | 'error'
     MatTooltipModule,
     RouterLink,
     ConfirmDialogComponent,
+    ApplicationActivityTimelineComponent,
     InterviewDialogComponent,
   ],
   templateUrl: './application-details-page.component.html',
@@ -57,21 +59,34 @@ export class ApplicationDetailsPageComponent {
   readonly confirmDeleteVisible = signal(false);
   readonly interviewPendingDelete = signal<Interview | null>(null);
   readonly deleting = signal(false);
+  readonly activityTimeline = viewChild(ApplicationActivityTimelineComponent);
 
   readonly upcomingInterviews = computed(() => {
     const now = Date.now();
     return (
-      this.application()?.interviews.filter(
-        (interview) =>
-          interview.outcome === null && new Date(interview.scheduled_at).getTime() >= now,
-      ) ?? []
+      this.application()
+        ?.interviews.filter(
+          (interview) =>
+            interview.outcome === null && new Date(interview.scheduled_at).getTime() >= now,
+        )
+        .sort(
+          (left, right) =>
+            new Date(left.scheduled_at).getTime() - new Date(right.scheduled_at).getTime() ||
+            left.id - right.id,
+        ) ?? []
     );
   });
 
   readonly completedInterviews = computed(() => {
     const upcomingIds = new Set(this.upcomingInterviews().map((interview) => interview.id));
     return (
-      this.application()?.interviews.filter((interview) => !upcomingIds.has(interview.id)) ?? []
+      this.application()
+        ?.interviews.filter((interview) => !upcomingIds.has(interview.id))
+        .sort(
+          (left, right) =>
+            new Date(right.scheduled_at).getTime() - new Date(left.scheduled_at).getTime() ||
+            right.id - left.id,
+        ) ?? []
     );
   });
 
@@ -184,6 +199,7 @@ export class ApplicationDetailsPageComponent {
       .subscribe({
         next: (interview) => {
           this.storeInterview(interview);
+          this.activityTimeline()?.refresh();
           this.dialogVisible.set(false);
           this.snackBar.open(selected ? 'Interview updated.' : 'Interview scheduled.', 'Dismiss', {
             duration: 3000,
@@ -240,6 +256,7 @@ export class ApplicationDetailsPageComponent {
           );
           this.confirmDeleteVisible.set(false);
           this.interviewPendingDelete.set(null);
+          this.activityTimeline()?.refresh();
           this.snackBar.open('Interview deleted.', 'Dismiss', { duration: 3000 });
         },
         error: () => {

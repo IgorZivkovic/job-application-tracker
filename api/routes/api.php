@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ApplicationActivityController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\InterviewController;
 use App\Http\Controllers\JobApplicationController;
@@ -70,6 +71,12 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
         ->name('dashboard.show');
 
     Route::scopeBindings()->middleware('auth:sanctum')->group(function (): void {
+        Route::get('/job-applications/{job_application}/activities', [ApplicationActivityController::class, 'index'])
+            ->middleware(Authorize::using('view', 'job_application'))
+            ->name('job-applications.activities.index');
+        Route::post('/job-applications/{job_application}/activities', [ApplicationActivityController::class, 'store'])
+            ->middleware(Authorize::using('update', 'job_application'))
+            ->name('job-applications.activities.store');
         Route::get('/job-applications/{job_application}/interviews', [InterviewController::class, 'index'])
             ->middleware(Authorize::using('view', 'job_application'))
             ->name('job-applications.interviews.index');

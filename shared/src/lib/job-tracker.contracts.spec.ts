@@ -1,4 +1,5 @@
 import {
+  APPLICATION_ACTIVITY_TYPES,
   INTERVIEW_OUTCOMES,
   INTERVIEW_TYPES,
   JOB_APPLICATION_SORT_FIELDS,
@@ -26,12 +27,25 @@ describe('job tracker contracts', () => {
     expect(WORK_MODES).toEqual(['onsite', 'hybrid', 'remote']);
     expect(INTERVIEW_TYPES).toEqual(['screening', 'technical', 'hr', 'final']);
     expect(INTERVIEW_OUTCOMES).toEqual(['passed', 'failed', 'cancelled']);
+    expect(APPLICATION_ACTIVITY_TYPES).toEqual([
+      'tracking_started',
+      'application_created',
+      'status_changed',
+      'application_updated',
+      'interview_scheduled',
+      'interview_rescheduled',
+      'interview_outcome_recorded',
+      'interview_updated',
+      'interview_deleted',
+      'comment_added',
+    ]);
   });
 
   it('defines the supported application sorting contract', () => {
     expect(JOB_APPLICATION_SORT_FIELDS).toEqual([
       'position',
       'status',
+      'board_order',
       'work_mode',
       'applied_at',
       'next_action_at',
@@ -56,6 +70,7 @@ describe('job tracker contracts', () => {
       company: { id: company.id, name: company.name },
       position: 'Frontend Developer',
       status: 'applied',
+      board_order: 1,
       work_mode: 'remote',
       employment_type: 'full-time',
       source_url: null,

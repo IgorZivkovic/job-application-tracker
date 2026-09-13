@@ -5,7 +5,13 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { ApiOperationError } from '../../models/api.model';
-import { Interview, InterviewPayload, JobApplicationDetail } from '../../models/job-tracker.model';
+import {
+  ApplicationActivity,
+  Interview,
+  InterviewPayload,
+  JobApplicationDetail,
+} from '../../models/job-tracker.model';
+import { ApplicationActivityService } from '../../services/application-activity.service';
 import { ApiErrorService } from '../../services/api-error.service';
 import { InterviewService } from '../../services/interview.service';
 import { JobApplicationService } from '../../services/job-application.service';
@@ -19,6 +25,10 @@ describe('ApplicationDetailsPageComponent', () => {
     create: ReturnType<typeof vi.fn>;
     update: ReturnType<typeof vi.fn>;
     remove: ReturnType<typeof vi.fn>;
+  };
+  let activityService: {
+    list: ReturnType<typeof vi.fn>;
+    addComment: ReturnType<typeof vi.fn>;
   };
   let apiError: WritableSignal<ApiOperationError | null>;
 
@@ -62,6 +72,15 @@ describe('ApplicationDetailsPageComponent', () => {
     created_at: '2026-09-12T10:00:00Z',
     updated_at: '2026-09-12T10:00:00Z',
   };
+  const statusActivity: ApplicationActivity = {
+    id: 30,
+    job_application_id: 12,
+    type: 'status_changed',
+    comment: null,
+    metadata: { from_status: 'applied', to_status: 'interview' },
+    actor: { id: 1, email: 'admin@example.com' },
+    occurred_at: '2026-09-13T10:00:00Z',
+  };
 
   beforeEach(async () => {
     applicationService = { get: vi.fn(() => of(application)) };
@@ -69,6 +88,10 @@ describe('ApplicationDetailsPageComponent', () => {
       create: vi.fn(() => of(upcomingInterview)),
       update: vi.fn(() => of(upcomingInterview)),
       remove: vi.fn(() => of({ deleted: true })),
+    };
+    activityService = {
+      list: vi.fn(() => of(activityPage([statusActivity], 1, 2))),
+      addComment: vi.fn(),
     };
     apiError = signal<ApiOperationError | null>(null);
 
@@ -82,6 +105,7 @@ describe('ApplicationDetailsPageComponent', () => {
         },
         { provide: JobApplicationService, useValue: applicationService },
         { provide: InterviewService, useValue: interviewService },
+        { provide: ApplicationActivityService, useValue: activityService },
         {
           provide: ApiErrorService,
           useValue: { lastError: apiError.asReadonly(), clear: vi.fn(() => apiError.set(null)) },
@@ -103,6 +127,29 @@ describe('ApplicationDetailsPageComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('Angular Developer');
     expect(fixture.nativeElement.textContent).toContain('Upcoming');
     expect(fixture.nativeElement.textContent).toContain('Completed');
+    expect(activityService.list).toHaveBeenCalledWith(12, 1);
+    expect(fixture.nativeElement.textContent).toContain('Applied → Interview');
+  });
+
+  it('shows upcoming interviews nearest first and completed interviews newest first', () => {
+    const laterUpcoming = {
+      ...upcomingInterview,
+      id: 9,
+      scheduled_at: '2100-09-20T08:30:00Z',
+    };
+    const newerCompleted = {
+      ...completedInterview,
+      id: 10,
+      scheduled_at: '2021-09-18T08:30:00Z',
+    };
+
+    component.application.set({
+      ...application,
+      interviews: [laterUpcoming, completedInterview, upcomingInterview, newerCompleted],
+    });
+
+    expect(component.upcomingInterviews().map(({ id }) => id)).toEqual([8, 9]);
+    expect(component.completedInterviews().map(({ id }) => id)).toEqual([10, 7]);
   });
 
   it('schedules an interview and keeps the collection chronological', () => {
@@ -120,6 +167,7 @@ describe('ApplicationDetailsPageComponent', () => {
     expect(interviewService.create).toHaveBeenCalledWith(12, payload());
     expect(component.application()?.interviews.map(({ id }) => id)).toEqual([7, 9, 8]);
     expect(component.dialogVisible()).toBe(false);
+    expect(activityService.list).toHaveBeenCalledTimes(2);
   });
 
   it('updates the selected interview', () => {
@@ -131,6 +179,7 @@ describe('ApplicationDetailsPageComponent', () => {
 
     expect(interviewService.update).toHaveBeenCalledWith(12, upcomingInterview.id, payload());
     expect(component.application()?.interviews.find(({ id }) => id === 8)?.outcome).toBe('passed');
+    expect(activityService.list).toHaveBeenCalledTimes(2);
   });
 
   it('shows backend validation errors in the open interview dialog', () => {
@@ -160,6 +209,7 @@ describe('ApplicationDetailsPageComponent', () => {
     expect(interviewService.remove).toHaveBeenCalledWith(12, upcomingInterview.id);
     expect(component.application()?.interviews).toEqual([completedInterview]);
     expect(component.confirmDeleteVisible()).toBe(false);
+    expect(activityService.list).toHaveBeenCalledTimes(2);
   });
 
   it.each([
@@ -186,5 +236,22 @@ function payload(): InterviewPayload {
     location_or_link: null,
     notes: null,
     outcome: null,
+  };
+}
+
+function activityPage(data: ApplicationActivity[], currentPage: number, lastPage: number) {
+  return {
+    data,
+    links: { first: null, last: null, prev: null, next: null },
+    meta: {
+      current_page: currentPage,
+      from: data.length > 0 ? 1 : null,
+      last_page: lastPage,
+      links: [],
+      path: '/api/v1/job-applications/12/activities',
+      per_page: 10,
+      to: data.length,
+      total: data.length,
+    },
   };
 }
