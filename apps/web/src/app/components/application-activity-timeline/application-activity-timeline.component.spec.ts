@@ -68,7 +68,7 @@ describe('ApplicationActivityTimelineComponent', () => {
     expect(activityService.addComment).toHaveBeenCalledWith(12, 'Followed up.');
     expect(component.activities()[0]).toEqual(commentActivity());
     expect(component.commentDraft()).toBe('');
-    expect(component.announcement()).toContain('Follow-up note added');
+    expect(component.announcement()).toContain('Timeline note added');
   });
 
   it('keeps the draft and exposes validation errors when submission fails', () => {
@@ -110,7 +110,32 @@ describe('ApplicationActivityTimelineComponent', () => {
       expect(component.activityTitle(activity)).not.toBe('');
       expect(component.activityDescription(activity)).not.toBe('');
       expect(component.activityIcon(activity.type)).not.toBe('');
+      expect(component.activityTone(activity)).not.toBe('');
     }
+  });
+
+  it('uses semantic tones for statuses and interview outcomes', () => {
+    const activities = activitiesByType();
+    const statusChange = activities.find(({ type }) => type === 'status_changed');
+    const passedInterview = activities.find(({ type }) => type === 'interview_outcome_recorded');
+    const deletedInterview = activities.find(({ type }) => type === 'interview_deleted');
+
+    expect(component.activityTone(statusChange!)).toBe('purple');
+    expect(component.activityTone(passedInterview!)).toBe('green');
+    expect(component.activityTone(deletedInterview!)).toBe('red');
+    expect(component.activityTone(commentActivity())).toBe('purple');
+  });
+
+  it('formats the HR interview acronym in timeline descriptions', () => {
+    const activity = activitiesByType().find(({ type }) => type === 'interview_outcome_recorded');
+    expect(activity).toBeDefined();
+
+    const hrActivity = {
+      ...activity!,
+      metadata: { ...activity!.metadata, interview_type: 'hr' },
+    } as ApplicationActivity;
+
+    expect(component.activityDescription(hrActivity)).toContain('HR interview');
   });
 });
 

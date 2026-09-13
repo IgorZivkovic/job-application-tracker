@@ -1,13 +1,13 @@
+@use 'mixins' as m;
+
 :host {
   display: block;
 }
 
 .activity-card {
+  @include m.surface-card;
+
   padding: 1.5rem;
-  border: 1px solid var(--app-border);
-  border-radius: 1rem;
-  background: var(--app-card-bg);
-  box-shadow: 0 14px 36px rgba(24, 39, 75, 0.06);
 
   h2 {
     margin: 0;
@@ -25,7 +25,7 @@
   padding: 1rem;
   border: 1px solid var(--app-border);
   border-radius: 0.8rem;
-  background: #f8fbff;
+  background: var(--app-surface-subtle);
 
   label {
     display: block;
@@ -45,7 +45,7 @@
     min-height: 5rem;
     resize: vertical;
     padding: 0.75rem;
-    border: 1px solid #98a2b3;
+    border: 1px solid var(--app-placeholder);
     border-radius: 0.65rem;
     color: var(--app-text);
     background: var(--app-card-bg);
@@ -155,8 +155,8 @@
   display: grid;
   place-items: center;
   border-radius: 50%;
-  color: var(--app-primary);
-  background: #e7f1fd;
+  color: var(--activity-tone, var(--app-primary));
+  background: var(--activity-tone-bg, var(--app-tone-blue-bg));
 
   mat-icon {
     width: 1.15rem;
@@ -166,20 +166,40 @@
   }
 }
 
-.activity-item[data-activity-type='comment_added'] .activity-icon {
-  color: #7b1fa2;
-  background: #f3e8f7;
+.activity-item[data-activity-tone='neutral'] {
+  --activity-tone: var(--app-tone-neutral-accent);
+  --activity-tone-bg: var(--app-tone-neutral-bg);
 }
 
-.activity-item[data-activity-type='interview_deleted'] .activity-icon {
-  color: var(--app-danger);
-  background: #feeceb;
+.activity-item[data-activity-tone='purple'] {
+  --activity-tone: var(--app-tone-purple);
+  --activity-tone-bg: var(--app-tone-purple-bg);
+}
+
+.activity-item[data-activity-tone='green'] {
+  --activity-tone: var(--app-tone-green);
+  --activity-tone-bg: var(--app-tone-green-bg);
+}
+
+.activity-item[data-activity-tone='red'] {
+  --activity-tone: var(--app-tone-red);
+  --activity-tone-bg: var(--app-tone-red-bg);
+}
+
+.activity-item[data-activity-tone='amber'] {
+  --activity-tone: var(--app-tone-amber);
+  --activity-tone-bg: var(--app-tone-amber-bg);
+}
+
+.activity-item[data-activity-tone='brown'] {
+  --activity-tone: var(--app-tone-brown);
+  --activity-tone-bg: var(--app-tone-brown-bg);
 }
 
 .activity-description {
   margin-top: 0.3rem !important;
   overflow-wrap: anywhere;
-  color: #344054;
+  color: var(--app-text-secondary);
   line-height: 1.5;
   white-space: pre-wrap;
 }
@@ -205,16 +225,6 @@
 .load-older {
   display: flex;
   margin: 0 auto;
-}
-
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  clip-path: inset(50%);
-  white-space: nowrap;
 }
 
 @media (max-width: 560px) {

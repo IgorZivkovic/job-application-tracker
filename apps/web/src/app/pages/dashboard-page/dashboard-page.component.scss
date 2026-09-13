@@ -1,57 +1,29 @@
+@use 'mixins' as m;
+
 :host {
   display: block;
 }
 
 .page {
-  width: min(calc(100% - 2.5rem), 1100px);
-  margin: 0 auto;
-  padding: 1.25rem 0;
-  display: grid;
+  @include m.page-container;
+
   grid-template-columns: minmax(0, 1fr);
-  gap: 1rem;
 }
 
-.page-toolbar,
 .state-card {
-  background: var(--app-card-bg);
-  border: 1px solid var(--app-border);
-  border-radius: 1rem;
-  box-shadow: 0 14px 36px rgba(24, 39, 75, 0.06);
+  @include m.surface-card;
 }
 
 .page-toolbar {
-  min-height: var(--app-page-header-min-height);
-  padding: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  box-sizing: border-box;
-  background: linear-gradient(135deg, #ffffff 0%, #eef6ff 100%);
-}
-
-.page-toolbar h1,
-.page-toolbar p {
-  margin: 0;
-}
-
-.page-toolbar h1 {
-  font-size: 1.65rem;
-  line-height: 1.2;
+  @include m.page-toolbar;
 }
 
 .section-label {
-  margin: 0 0 0.35rem;
-  color: var(--app-primary);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  @include m.section-label;
 }
 
 .toolbar-subtitle {
-  margin-top: 0.25rem !important;
-  color: var(--app-muted);
+  @include m.toolbar-subtitle;
 }
 
 .state-card {
@@ -117,10 +89,10 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.8rem;
-  background: #ffffff;
+  background: var(--app-card-bg);
   border: 1px solid var(--app-border);
   border-radius: 0.85rem;
-  box-shadow: 0 8px 22px rgba(24, 39, 75, 0.05);
+  box-shadow: var(--app-shadow-card-subtle);
 }
 
 .summary-card span {
@@ -144,7 +116,7 @@
 .total-card span,
 .total-card strong,
 .total-card mat-icon {
-  color: #ffffff;
+  color: var(--app-on-primary);
 }
 
 .total-card > div:last-child {
@@ -187,7 +159,7 @@
   top: 0;
   bottom: 0;
   left: 0;
-  background: #667085;
+  background: var(--app-tone-neutral-accent);
 }
 
 .status-summary:hover {
@@ -196,23 +168,23 @@
 }
 
 .status-applied::before {
-  background: #1976d2;
+  background: var(--app-tone-blue-accent);
 }
 
 .status-interview::before {
-  background: #8e24aa;
+  background: var(--app-tone-purple-accent);
 }
 
 .status-offer::before {
-  background: #2e7d32;
+  background: var(--app-tone-green-accent);
 }
 
 .status-rejected::before {
-  background: #d32f2f;
+  background: var(--app-tone-red-accent);
 }
 
 .status-withdrawn::before {
-  background: #8d6e63;
+  background: var(--app-tone-brown-accent);
 }
 
 @media (max-width: 900px) {
@@ -223,12 +195,11 @@
 
 @media (max-width: 560px) {
   .page {
-    width: min(calc(100% - 1.5rem), 1100px);
+    @include m.mobile-page-container;
   }
 
   .page-toolbar {
-    align-items: flex-start;
-    flex-direction: column;
+    @include m.mobile-page-toolbar;
   }
 
   .page-toolbar > a {

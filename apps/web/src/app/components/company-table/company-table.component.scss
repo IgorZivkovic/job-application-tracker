@@ -1,3 +1,5 @@
+@use 'mixins' as m;
+
 th:nth-child(1),
 td:nth-child(1) {
   width: 24%;
@@ -43,34 +45,25 @@ a:hover {
 }
 
 .actions-cell {
-  display: flex;
-  justify-content: center;
-  gap: 0.2rem;
+  @include m.table-actions-cell;
 }
 
 .action-icon {
-  width: 20px;
-  height: 20px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  line-height: 20px;
-  vertical-align: middle;
+  @include m.action-icon;
 }
 
 .edit-action {
-  color: #7b1fa2;
+  color: var(--app-tone-purple);
 }
 
 .danger-action {
-  color: #d32f2f;
+  color: var(--app-tone-red-accent);
 }
 
 .edit-action:hover {
-  background: #f2e8f7;
+  background: var(--app-tone-purple-bg);
 }
 
 .danger-action:hover {
-  background: #fdecec;
+  background: var(--app-tone-red-bg);
 }

@@ -1,3 +1,5 @@
+@use 'mixins' as m;
+
 :host {
   display: block;
 }
@@ -9,12 +11,10 @@
 }
 
 .overview-card {
+  @include m.surface-card;
+
   min-width: 0;
   overflow: hidden;
-  background: var(--app-card-bg);
-  border: 1px solid var(--app-border);
-  border-radius: 1rem;
-  box-shadow: 0 14px 36px rgba(24, 39, 75, 0.06);
 }
 
 .card-heading {
@@ -25,7 +25,7 @@
   justify-content: space-between;
   gap: 1rem;
   box-sizing: border-box;
-  border-bottom: 1px solid #e4e9f2;
+  border-bottom: 1px solid var(--app-border-subtle);
 }
 
 .card-heading h2,
@@ -37,12 +37,7 @@
 }
 
 .section-label {
-  margin: 0 0 0.35rem;
-  color: var(--app-primary);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  @include m.section-label;
 }
 
 .list-content {
@@ -83,12 +78,12 @@
 }
 
 .application-icon {
-  background: #e7f1fc;
-  color: #1565c0;
+  background: var(--app-tone-blue-bg);
+  color: var(--app-tone-blue);
 }
 .interview-icon {
-  background: #f2e8f7;
-  color: #7b1fa2;
+  background: var(--app-tone-purple-bg);
+  color: var(--app-tone-purple);
 }
 
 .item-copy,
@@ -124,36 +119,34 @@
 }
 
 .status-badge {
-  min-height: 23px;
-  padding: 0 0.55rem;
-  display: inline-flex;
-  align-items: center;
-  border-radius: 999px;
-  background: #edf2f7;
-  color: #475467;
-  font-size: 0.7rem;
-  font-weight: 700;
+  @include m.badge(23px, 0 0.55rem, 0.7rem);
+
+  background: var(--app-tone-neutral-bg);
+  color: var(--app-tone-neutral);
 }
 
 .status-applied {
-  background: #e7f1fc;
-  color: #1565c0;
+  background: var(--app-tone-blue-bg);
+  color: var(--app-tone-blue);
 }
 .status-interview {
-  background: #f2e8f7;
-  color: #7b1fa2;
+  background: var(--app-tone-purple-bg);
+  color: var(--app-tone-purple);
 }
 .status-offer {
-  background: #e8f5e9;
-  color: #237a3b;
+  background: var(--app-tone-green-bg);
+  color: var(--app-tone-green);
 }
-.status-rejected,
+.status-rejected {
+  background: var(--app-tone-red-bg);
+  color: var(--app-tone-red);
+}
 .status-withdrawn {
-  background: #fdecec;
-  color: #b42318;
+  background: var(--app-tone-brown-bg);
+  color: var(--app-tone-brown);
 }
 .interview-time strong {
-  color: #7b1fa2;
+  color: var(--app-tone-purple);
   font-size: 0.84rem;
 }
 
@@ -170,7 +163,7 @@
 .empty-list mat-icon {
   width: 34px;
   height: 34px;
-  color: #98a2b3;
+  color: var(--app-placeholder);
   font-size: 34px;
 }
 

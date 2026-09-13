@@ -1,0 +1,150 @@
+@mixin page-container($display: grid) {
+  width: min(calc(100% - 2.5rem), var(--app-content-max-width));
+  margin: 0 auto;
+  padding: 1.25rem 0;
+  display: $display;
+  gap: 1rem;
+
+  @if $display == flex {
+    flex-direction: column;
+  }
+}
+
+@mixin mobile-page-container {
+  width: min(calc(100% - 1.5rem), var(--app-content-max-width));
+}
+
+@mixin mobile-page-toolbar {
+  align-items: flex-start;
+  flex-direction: column;
+}
+
+@mixin surface-card($shadow: var(--app-shadow-card)) {
+  background: var(--app-card-bg);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-card-radius);
+  box-shadow: $shadow;
+}
+
+@mixin page-toolbar($shadow: var(--app-shadow-card)) {
+  @include surface-card($shadow);
+
+  min-height: var(--app-page-header-min-height);
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  box-sizing: border-box;
+  background: var(--app-toolbar-background);
+
+  h1,
+  p {
+    margin: 0;
+  }
+
+  h1 {
+    font-size: 1.65rem;
+    line-height: 1.2;
+  }
+}
+
+@mixin section-label($font-size: 0.75rem, $margin-bottom: 0.35rem) {
+  margin: 0 0 $margin-bottom !important;
+  color: var(--app-primary);
+  font-size: $font-size;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@mixin toolbar-subtitle {
+  margin: 0.25rem 0 0 !important;
+  color: var(--app-muted);
+}
+
+@mixin dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: var(--app-dialog-backdrop);
+}
+
+@mixin dialog-panel-surface {
+  padding: 1.25rem;
+  background: var(--app-card-bg);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-card-radius);
+  box-shadow: var(--app-shadow-dialog);
+}
+
+@mixin dialog-header {
+  margin-bottom: 1rem;
+
+  h2,
+  p {
+    margin: 0;
+  }
+
+  h2 {
+    color: var(--app-text);
+    font-size: 1.35rem;
+  }
+
+  p {
+    margin-top: 0.35rem;
+    color: var(--app-muted);
+    line-height: 1.5;
+  }
+}
+
+@mixin dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+@mixin dialog-form($gap: 0.75rem, $columns: null) {
+  display: grid;
+  gap: $gap;
+
+  @if $columns {
+    grid-template-columns: $columns;
+  }
+}
+
+@mixin badge($min-height: null, $padding: 0 0.65rem, $font-size: 0.78rem) {
+  display: inline-flex;
+  align-items: center;
+
+  @if $min-height {
+    min-height: $min-height;
+  }
+
+  padding: $padding;
+  border-radius: var(--app-pill-radius);
+  font-size: $font-size;
+  font-weight: 700;
+}
+
+@mixin table-actions-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  white-space: nowrap;
+}
+
+@mixin action-icon {
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  line-height: 20px;
+  vertical-align: middle;
+}

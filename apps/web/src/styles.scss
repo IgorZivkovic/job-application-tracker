@@ -1,4 +1,6 @@
 @use '@angular/material' as mat;
+@use 'mixins' as m;
+@use 'tokens';
 
 .visually-hidden {
   position: absolute;
@@ -13,13 +15,17 @@
 }
 
 app-application-board {
+  .board-section {
+    @include m.surface-card;
+  }
+
   .application-card.cdk-drag-animating,
   .column-content.cdk-drop-list-dragging .application-card:not(.cdk-drag-placeholder) {
     transition: transform 180ms cubic-bezier(0, 0, 0.2, 1);
   }
 
   .column-content.cdk-drop-list-receiving {
-    background: #edf5ff;
+    background: var(--app-drop-target-bg);
     outline: 2px dashed #90caf9;
     outline-offset: -4px;
     border-radius: 0.55rem;
@@ -50,20 +56,6 @@ html {
       density: 0,
     )
   );
-}
-
-:root {
-  color-scheme: light;
-  --app-font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-  --app-page-bg: #f4f7fb;
-  --app-card-bg: #ffffff;
-  --app-border: #d7deea;
-  --app-text: #172033;
-  --app-muted: #667085;
-  --app-placeholder: #98a2b3;
-  --app-primary: #006adc;
-  --app-danger: #d92d20;
-  --app-page-header-min-height: 126px;
 }
 
 html,
@@ -121,6 +113,70 @@ textarea::placeholder {
 
 .error-snackbar {
   --mdc-snackbar-container-color: #b3261e;
-  --mdc-snackbar-supporting-text-color: #ffffff;
-  --mat-snack-bar-button-color: #ffffff;
+  --mdc-snackbar-supporting-text-color: var(--app-on-primary);
+  --mat-snack-bar-button-color: var(--app-on-primary);
+}
+
+.application-details-page {
+  :is(.status-badge, .type-badge, .outcome-badge) {
+    @include m.badge($padding: 0);
+
+    width: fit-content;
+    line-height: 1;
+  }
+
+  .status-badge {
+    padding: 0.65rem 0.85rem;
+    color: var(--chip-color, var(--app-text-secondary));
+    background: var(--chip-background, var(--app-tone-neutral-bg));
+  }
+
+  :is(.type-badge, .outcome-badge) {
+    padding: 0.4rem 0.55rem;
+  }
+
+  .type-badge {
+    color: var(--chip-color, var(--app-tone-cyan));
+    background: var(--chip-background, var(--app-tone-cyan-bg));
+  }
+
+  .outcome-badge {
+    color: var(--chip-color, var(--app-tone-amber));
+    background: var(--chip-background, var(--app-tone-amber-bg));
+  }
+
+  :is(.status-applied, .type-technical) {
+    --chip-color: var(--app-tone-blue);
+    --chip-background: var(--app-tone-blue-bg);
+  }
+
+  :is(.status-interview, .type-hr) {
+    --chip-color: var(--app-tone-purple);
+    --chip-background: var(--app-tone-purple-bg);
+  }
+
+  :is(.status-offer, .outcome-passed) {
+    --chip-color: var(--app-tone-green);
+    --chip-background: var(--app-tone-green-bg);
+  }
+
+  :is(.status-rejected, .outcome-failed) {
+    --chip-color: var(--app-tone-red);
+    --chip-background: var(--app-tone-red-bg);
+  }
+
+  .status-withdrawn {
+    --chip-color: var(--app-tone-brown);
+    --chip-background: var(--app-tone-brown-bg);
+  }
+
+  .type-final {
+    --chip-color: var(--app-tone-indigo);
+    --chip-background: var(--app-tone-indigo-bg);
+  }
+
+  :is(.outcome-cancelled, .outcome-pending) {
+    --chip-color: var(--app-tone-neutral);
+    --chip-background: var(--app-tone-neutral-bg);
+  }
 }

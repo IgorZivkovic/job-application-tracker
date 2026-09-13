@@ -1,3 +1,5 @@
+@use 'mixins' as m;
+
 :host {
   display: block;
   min-width: 0;
@@ -7,10 +9,6 @@
   min-width: 0;
   padding: 1.25rem;
   box-sizing: border-box;
-  background: var(--app-card-bg);
-  border: 1px solid var(--app-border);
-  border-radius: 1rem;
-  box-shadow: 0 14px 36px rgba(24, 39, 75, 0.06);
 }
 
 .section-heading {
@@ -37,12 +35,7 @@
 }
 
 .section-label {
-  margin-bottom: 0.3rem !important;
-  color: var(--app-primary) !important;
-  font-size: 0.72rem !important;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  @include m.section-label(0.72rem, 0.3rem);
 }
 
 .board-notice {
@@ -96,27 +89,27 @@
   height: 9px;
   flex: 0 0 auto;
   border-radius: 50%;
-  background: #667085;
+  background: var(--app-tone-neutral-accent);
 }
 
 .status-applied {
-  background: #1976d2;
+  background: var(--app-tone-blue-accent);
 }
 
 .status-interview {
-  background: #8e24aa;
+  background: var(--app-tone-purple-accent);
 }
 
 .status-offer {
-  background: #2e7d32;
+  background: var(--app-tone-green-accent);
 }
 
 .status-rejected {
-  background: #d32f2f;
+  background: var(--app-tone-red-accent);
 }
 
 .status-withdrawn {
-  background: #8d6e63;
+  background: var(--app-tone-brown-accent);
 }
 
 .column-count {
@@ -124,9 +117,9 @@
   height: 26px;
   display: inline-grid;
   place-items: center;
-  border-radius: 999px;
+  border-radius: var(--app-pill-radius);
   background: #e8edf5;
-  color: #475467;
+  color: var(--app-tone-neutral);
   font-size: 0.78rem;
   font-weight: 700;
 }
@@ -146,7 +139,7 @@
   padding: 0.85rem;
   display: grid;
   gap: 0.8rem;
-  background: #ffffff;
+  background: var(--app-card-bg);
   border: 1px solid #e1e7f0;
   border-radius: 0.7rem;
   box-shadow: 0 5px 14px rgba(24, 39, 75, 0.05);
@@ -168,7 +161,7 @@
   border: 0;
   border-radius: 0.4rem;
   background: transparent;
-  color: #98a2b3;
+  color: var(--app-placeholder);
   cursor: grab;
 }
 
@@ -224,7 +217,7 @@
   display: grid;
   justify-items: start;
   gap: 0.35rem;
-  color: #667085;
+  color: var(--app-muted);
   font-size: 0.75rem;
 }
 
@@ -251,7 +244,7 @@
   place-content: center;
   justify-items: center;
   gap: 0.4rem;
-  color: #98a2b3;
+  color: var(--app-placeholder);
   font-size: 0.8rem;
 }
 
@@ -276,7 +269,7 @@
 }
 
 .column-link:hover {
-  background: #edf5ff;
+  background: var(--app-drop-target-bg);
 }
 
 @media (max-width: 560px) {

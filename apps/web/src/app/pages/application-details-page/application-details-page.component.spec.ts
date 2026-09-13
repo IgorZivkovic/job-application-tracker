@@ -131,6 +131,11 @@ describe('ApplicationDetailsPageComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('Applied → Interview');
   });
 
+  it('formats the HR interview acronym in uppercase', () => {
+    expect(component.interviewTypeLabel('hr')).toBe('HR');
+    expect(component.interviewTypeLabel('technical')).toBe('Technical');
+  });
+
   it('shows upcoming interviews nearest first and completed interviews newest first', () => {
     const laterUpcoming = {
       ...upcomingInterview,

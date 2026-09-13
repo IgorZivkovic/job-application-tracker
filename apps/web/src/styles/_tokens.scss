@@ -1,0 +1,62 @@
+:root {
+  color-scheme: light;
+
+  --app-font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  --app-page-bg: #f4f7fb;
+  --app-card-bg: #ffffff;
+  --app-on-primary: #ffffff;
+  --app-surface-subtle: #f8fbff;
+  --app-border: #d7deea;
+  --app-border-subtle: #e4e9f2;
+  --app-text: #172033;
+  --app-text-secondary: #344054;
+  --app-muted: #667085;
+  --app-placeholder: #98a2b3;
+  --app-primary: #006adc;
+  --app-danger: #d92d20;
+
+  --app-tone-neutral: #475467;
+  --app-tone-neutral-accent: #667085;
+  --app-tone-neutral-bg: #eef2f6;
+  --app-tone-blue: #1565c0;
+  --app-tone-blue-accent: #1976d2;
+  --app-tone-blue-bg: #e7f1fc;
+  --app-tone-cyan: #075985;
+  --app-tone-cyan-bg: #e0f2fe;
+  --app-tone-purple: #7b1fa2;
+  --app-tone-purple-accent: #8e24aa;
+  --app-tone-purple-bg: #f2e8f7;
+  --app-tone-green: #237a3b;
+  --app-tone-green-accent: #2e7d32;
+  --app-tone-green-bg: #e8f5e9;
+  --app-tone-red: #b42318;
+  --app-tone-red-accent: #d32f2f;
+  --app-tone-red-bg: #fdecec;
+  --app-tone-amber: #b54708;
+  --app-tone-amber-bg: #fff4e5;
+  --app-tone-brown: #795548;
+  --app-tone-brown-accent: #8d6e63;
+  --app-tone-brown-bg: #f3eeec;
+  --app-tone-indigo: #3949ab;
+  --app-tone-indigo-bg: #e8eaf6;
+
+  --app-card-radius: 1rem;
+  --app-control-radius: 0.75rem;
+  --app-pill-radius: 999px;
+  --app-shadow-card: 0 14px 36px rgba(24, 39, 75, 0.06);
+  --app-shadow-card-subtle: 0 8px 22px rgba(24, 39, 75, 0.05);
+  --app-shadow-raised: 0 18px 48px rgba(24, 39, 75, 0.08);
+  --app-shadow-dialog: 0 24px 60px rgba(15, 23, 42, 0.24);
+  --app-shadow-confirm-dialog: 0 24px 60px rgba(24, 39, 75, 0.24);
+  --app-dialog-backdrop: rgba(15, 23, 42, 0.45);
+  --app-confirm-dialog-backdrop: rgba(17, 24, 39, 0.42);
+  --app-drop-target-bg: #edf5ff;
+  --app-toolbar-background: linear-gradient(135deg, #ffffff 0%, #eef6ff 100%);
+  --app-content-max-width: 1100px;
+  --app-page-header-min-height: 126px;
+
+  --app-landing-primary: #2563eb;
+  --app-landing-text: #1f2937;
+  --app-landing-muted: #6b7280;
+  --app-landing-panel-border: rgba(15, 23, 42, 0.08);
+}

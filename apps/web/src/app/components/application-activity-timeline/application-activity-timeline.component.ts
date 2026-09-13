@@ -9,6 +9,8 @@ import { ApplicationActivity } from '../../models/job-tracker.model';
 import { ApiErrorService } from '../../services/api-error.service';
 import { ApplicationActivityService } from '../../services/application-activity.service';
 
+type ActivityTone = 'neutral' | 'blue' | 'purple' | 'green' | 'red' | 'amber' | 'brown';
+
 @Component({
   selector: 'app-application-activity-timeline',
   standalone: true,
@@ -126,7 +128,7 @@ export class ApplicationActivityTimelineComponent implements OnInit {
             ...current.filter(({ id }) => id !== activity.id),
           ]);
           this.commentDraft.set('');
-          this.announcement.set('Follow-up note added to the activity timeline.');
+          this.announcement.set('Timeline note added.');
         },
         error: () => {
           this.commentError.set(
@@ -159,7 +161,7 @@ export class ApplicationActivityTimelineComponent implements OnInit {
       case 'interview_deleted':
         return 'Interview deleted';
       case 'comment_added':
-        return 'Follow-up note added';
+        return 'Timeline note added';
     }
   }
 
@@ -213,6 +215,32 @@ export class ApplicationActivityTimelineComponent implements OnInit {
     }
   }
 
+  activityTone(activity: ApplicationActivity): ActivityTone {
+    switch (activity.type) {
+      case 'tracking_started':
+        return 'neutral';
+      case 'application_created':
+        return this.statusTone(activity.metadata.application.status);
+      case 'status_changed':
+        return this.statusTone(activity.metadata.to_status);
+      case 'application_updated':
+      case 'interview_rescheduled':
+      case 'interview_updated':
+        return 'amber';
+      case 'interview_scheduled':
+        return 'blue';
+      case 'interview_outcome_recorded':
+        if (activity.metadata.to_outcome === 'passed') return 'green';
+        if (activity.metadata.to_outcome === 'failed') return 'red';
+        if (activity.metadata.to_outcome === 'cancelled') return 'neutral';
+        return 'amber';
+      case 'interview_deleted':
+        return 'red';
+      case 'comment_added':
+        return 'purple';
+    }
+  }
+
   relativeTime(value: string): string {
     const difference = new Date(value).getTime() - Date.now();
     const absolute = Math.abs(difference);
@@ -247,7 +275,24 @@ export class ApplicationActivityTimelineComponent implements OnInit {
     return value === null ? 'Pending' : this.label(value);
   }
 
+  private statusTone(status: string): ActivityTone {
+    const tones: Record<string, ActivityTone> = {
+      saved: 'neutral',
+      applied: 'blue',
+      interview: 'purple',
+      offer: 'green',
+      rejected: 'red',
+      withdrawn: 'brown',
+    };
+
+    return tones[status] ?? 'neutral';
+  }
+
   private label(value: string): string {
+    if (value === 'hr') {
+      return 'HR';
+    }
+
     return value.replaceAll('_', ' ').replace(/\b\w/g, (character) => character.toUpperCase());
   }
 

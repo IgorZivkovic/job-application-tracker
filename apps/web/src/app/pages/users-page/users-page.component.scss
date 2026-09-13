@@ -1,64 +1,31 @@
+@use 'mixins' as m;
+
 :host {
   display: block;
 }
 
 .page-toolbar {
-  min-height: var(--app-page-header-min-height);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 1.5rem;
-  box-sizing: border-box;
-  background: linear-gradient(135deg, #ffffff 0%, #eef6ff 100%);
-  border: 1px solid var(--app-border);
-  border-radius: 1rem;
-  box-shadow: 0 18px 48px rgba(24, 39, 75, 0.08);
-
-  h1,
-  p {
-    margin: 0;
-  }
-
-  h1 {
-    font-size: 1.65rem;
-    line-height: 1.2;
-  }
+  @include m.page-toolbar(var(--app-shadow-raised));
 }
 
 .toolbar-subtitle {
-  margin-top: 0.25rem !important;
-  color: var(--app-muted);
+  @include m.toolbar-subtitle;
+
   font-size: 0.95rem;
 }
 
 .section-label {
-  margin-bottom: 0.35rem !important;
-  color: var(--app-primary);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  @include m.section-label;
 }
 
 .page {
-  width: min(calc(100% - 2.5rem), 1100px);
-  margin: 0 auto;
-  padding: 1.25rem 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  @include m.page-container(flex);
 }
 
 .filters-card {
+  @include m.surface-card;
+
   overflow: hidden;
-  background: var(--app-card-bg);
-  border: 1px solid var(--app-border);
-  border-radius: 1rem;
-  box-shadow: 0 14px 36px rgba(24, 39, 75, 0.06);
-}
-
-.filters-card {
   padding: 1rem;
 }
 
@@ -74,12 +41,12 @@
 
 @media (max-width: 760px) {
   .page {
-    width: min(calc(100% - 1.5rem), 1100px);
+    @include m.mobile-page-container;
   }
 
   .page-toolbar {
-    align-items: flex-start;
-    flex-direction: column;
+    @include m.mobile-page-toolbar;
+
     flex-wrap: wrap;
   }
 

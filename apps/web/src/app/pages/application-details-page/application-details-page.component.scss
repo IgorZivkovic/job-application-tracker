@@ -1,13 +1,11 @@
+@use 'mixins' as m;
+
 :host {
   display: block;
 }
 
 .page {
-  width: min(calc(100% - 2.5rem), 1100px);
-  margin: 0 auto;
-  padding: 1.25rem 0;
-  display: grid;
-  gap: 1rem;
+  @include m.page-container;
 }
 
 .back-link {
@@ -15,67 +13,27 @@
   margin-left: -0.75rem;
 }
 
-.page-toolbar,
 .details-card,
 .interviews-card,
 .state-card {
-  background: var(--app-card-bg);
-  border: 1px solid var(--app-border);
-  border-radius: 1rem;
-  box-shadow: 0 14px 36px rgba(24, 39, 75, 0.06);
+  @include m.surface-card;
 }
 
 .page-toolbar {
-  min-height: var(--app-page-header-min-height);
-  padding: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  background: linear-gradient(135deg, #ffffff 0%, #eef6ff 100%);
-
-  h1,
-  p {
-    margin: 0;
-  }
-
-  h1 {
-    font-size: 1.65rem;
-    line-height: 1.2;
-  }
+  @include m.page-toolbar;
 }
 
 .section-label {
-  margin-bottom: 0.35rem !important;
-  color: var(--app-primary);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  @include m.section-label;
 }
 
-.toolbar-subtitle,
+.toolbar-subtitle {
+  @include m.toolbar-subtitle;
+}
+
 .section-header p {
-  margin-top: 0.25rem !important;
+  margin-top: 0.25rem;
   color: var(--app-muted);
-}
-
-.status-badge,
-.type-badge,
-.outcome-badge {
-  display: inline-flex;
-  align-items: center;
-  width: fit-content;
-  border-radius: 999px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.status-badge {
-  padding: 0.65rem 0.85rem;
-  color: #344054;
-  background: #eef2f6;
 }
 
 .details-card,
@@ -187,7 +145,7 @@
 
 .upcoming-item {
   border-left: 4px solid var(--app-primary);
-  background: #f8fbff;
+  background: var(--app-surface-subtle);
 }
 
 .interview-main {
@@ -199,18 +157,6 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 0.6rem;
-}
-
-.type-badge,
-.outcome-badge {
-  padding: 0.4rem 0.55rem;
-  color: #075985;
-  background: #e0f2fe;
-}
-
-.outcome-pending {
-  color: #475467;
-  background: #eaecf0;
 }
 
 .interview-actions {
@@ -226,7 +172,7 @@
 }
 
 .edit-action {
-  color: #7b1fa2;
+  color: var(--app-tone-purple);
 }
 
 .danger-action {
@@ -304,14 +250,13 @@
 
 @media (max-width: 560px) {
   .page {
-    width: min(calc(100% - 1.5rem), 1100px);
+    @include m.mobile-page-container;
   }
 
   .page-toolbar,
   .section-header,
   .interview-item {
-    align-items: flex-start;
-    flex-direction: column;
+    @include m.mobile-page-toolbar;
   }
 
   .section-header button {

@@ -155,8 +155,19 @@ class JobTrackerSeeder extends Seeder
             'Ember Commerce|Senior Full-stack Engineer' => [
                 [
                     'type' => ApplicationActivityType::CommentAdded,
+                    'comment' => 'Submitted Full-stack Angular + Laravel CV. Local reference: Documents/Career/Resumes/Fullstack-Angular-Laravel/CV.pdf',
+                    'occurred_at' => '2026-07-28 09:15:00',
+                ],
+                [
+                    'type' => ApplicationActivityType::CommentAdded,
                     'comment' => 'Recruiter confirmed that the team is reviewing my application this week.',
                     'occurred_at' => '2026-08-03 09:20:00',
+                ],
+                [
+                    'type' => ApplicationActivityType::InterviewOutcomeRecorded,
+                    'interview_type' => InterviewType::Hr,
+                    'metadata' => ['from_outcome' => null, 'to_outcome' => InterviewOutcome::Passed->value],
+                    'occurred_at' => '2026-08-04 10:45:00',
                 ],
                 [
                     'type' => ApplicationActivityType::InterviewOutcomeRecorded,
@@ -170,7 +181,7 @@ class JobTrackerSeeder extends Seeder
                         'from_status' => JobApplicationStatus::Applied->value,
                         'to_status' => JobApplicationStatus::Interview->value,
                     ],
-                    'occurred_at' => '2026-08-13 10:15:00',
+                    'occurred_at' => '2026-08-04 11:00:00',
                 ],
                 [
                     'type' => ApplicationActivityType::CommentAdded,
@@ -200,6 +211,11 @@ class JobTrackerSeeder extends Seeder
             'Harbor Financial|Web Application Engineer' => [
                 [
                     'type' => ApplicationActivityType::CommentAdded,
+                    'comment' => 'Submitted Angular / Frontend CV. Local reference: Documents/Career/Resumes/Angular-Senior/CV.pdf',
+                    'occurred_at' => '2026-08-25 10:15:00',
+                ],
+                [
+                    'type' => ApplicationActivityType::CommentAdded,
                     'comment' => 'Recruiter shared the interview agenda and the names of the two engineers joining the call.',
                     'occurred_at' => '2026-09-02 16:15:00',
                 ],
@@ -221,6 +237,11 @@ class JobTrackerSeeder extends Seeder
             'BrightPeak Software|Angular Platform Engineer' => [
                 [
                     'type' => ApplicationActivityType::CommentAdded,
+                    'comment' => 'Submitted UI Platform CV. Local reference: Documents/Career/Resumes/UI-Platform/CV-English.pdf',
+                    'occurred_at' => '2026-09-05 09:30:00',
+                ],
+                [
+                    'type' => ApplicationActivityType::CommentAdded,
                     'comment' => 'Sent a short follow-up with links to the design-system and migration case studies.',
                     'occurred_at' => '2026-09-12 09:10:00',
                 ],
@@ -228,8 +249,27 @@ class JobTrackerSeeder extends Seeder
             'Northstar Labs|Senior Angular Developer' => [
                 [
                     'type' => ApplicationActivityType::CommentAdded,
+                    'comment' => 'Submitted Angular / Frontend CV. Local reference: Documents/Career/Resumes/Angular-Senior/CV.pdf',
+                    'occurred_at' => '2026-08-20 08:45:00',
+                ],
+                [
+                    'type' => ApplicationActivityType::CommentAdded,
                     'comment' => 'Follow up on Friday if there is no update from the hiring team.',
                     'occurred_at' => '2026-09-11 13:45:00',
+                ],
+            ],
+            'Vertex Systems|Laravel Developer' => [
+                [
+                    'type' => ApplicationActivityType::CommentAdded,
+                    'comment' => 'Submitted Laravel API CV. Local reference: Documents/Career/Resumes/Backend-Laravel/Resume.pdf',
+                    'occurred_at' => '2026-08-10 08:50:00',
+                ],
+            ],
+            'NovaWorks|PHP and Angular Engineer' => [
+                [
+                    'type' => ApplicationActivityType::CommentAdded,
+                    'comment' => 'Submitted Full-stack Angular + Laravel CV. Local reference: Documents/Career/Resumes/Fullstack-Angular-Laravel/CV.pdf',
+                    'occurred_at' => '2026-09-09 09:15:00',
                 ],
             ],
         ];
@@ -527,6 +567,15 @@ class JobTrackerSeeder extends Seeder
                             'currency' => 'EUR',
                             'notes' => 'Review the offer, benefits, and on-call expectations.',
                             'interviews' => [
+                                [
+                                    'type' => InterviewType::Hr,
+                                    'scheduled_at' => '2026-08-04 10:00:00',
+                                    'contact_name' => 'Magda Lewandowska',
+                                    'contact_email' => 'magda@ember-commerce.example.com',
+                                    'location_or_link' => 'https://meet.example.com/ember-hr',
+                                    'notes' => 'Introductory conversation about the role, team, and expectations.',
+                                    'outcome' => InterviewOutcome::Passed,
+                                ],
                                 [
                                     'type' => InterviewType::Technical,
                                     'scheduled_at' => '2026-08-12 13:00:00',

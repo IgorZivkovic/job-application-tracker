@@ -18,8 +18,13 @@ class DatabaseSeederTest extends TestCase
         $this->assertDatabaseCount('auth_users', 2);
         $this->assertDatabaseCount('companies', 15);
         $this->assertDatabaseCount('job_applications', 26);
-        $this->assertDatabaseCount('interviews', 12);
-        $this->assertDatabaseCount('application_activities', 50);
+        $this->assertDatabaseCount('interviews', 13);
+        $this->assertDatabaseCount('application_activities', 58);
+
+        $this->assertDatabaseHas('application_activities', [
+            'type' => 'comment_added',
+            'comment' => 'Submitted Full-stack Angular + Laravel CV. Local reference: Documents/Career/Resumes/Fullstack-Angular-Laravel/CV.pdf',
+        ]);
 
         $admin = AuthUser::query()->where('email', 'admin@example.com')->firstOrFail();
         $viewer = AuthUser::query()->where('email', 'viewer@example.com')->firstOrFail();
@@ -37,7 +42,7 @@ class DatabaseSeederTest extends TestCase
 
         $this->assertCount(12, $admin->companies);
         $this->assertCount(15, $adminApplications);
-        $this->assertCount(9, $adminApplications->flatMap->interviews);
+        $this->assertCount(10, $adminApplications->flatMap->interviews);
         $this->assertCount(3, $viewer->companies);
         $this->assertCount(11, $viewerApplications);
         $this->assertCount(3, $viewerApplications->flatMap->interviews);

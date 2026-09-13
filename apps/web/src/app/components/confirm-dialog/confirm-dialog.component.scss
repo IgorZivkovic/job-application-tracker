@@ -1,3 +1,5 @@
+@use 'mixins' as m;
+
 :host {
   display: contents;
 }
@@ -9,18 +11,16 @@
   display: grid;
   place-items: center;
   padding: 1rem;
-  background: rgba(17, 24, 39, 0.42);
+  background: var(--app-confirm-dialog-backdrop);
 }
 
 .confirm-panel {
+  @include m.surface-card(var(--app-shadow-confirm-dialog));
+
   width: min(95vw, 380px);
   display: grid;
   gap: 0.85rem;
   padding: 1.25rem;
-  background: var(--app-card-bg);
-  border: 1px solid var(--app-border);
-  border-radius: 1rem;
-  box-shadow: 0 24px 60px rgba(24, 39, 75, 0.24);
 
   h2,
   p {
@@ -46,5 +46,5 @@
 
 .danger-button {
   --mdc-filled-button-container-color: var(--app-danger);
-  --mdc-filled-button-label-text-color: #ffffff;
+  --mdc-filled-button-label-text-color: var(--app-on-primary);
 }

@@ -1,26 +1,19 @@
+@use 'mixins' as m;
+
 :host {
   display: contents;
 }
 
 .dialog-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  display: grid;
-  place-items: center;
-  padding: 1rem;
-  background: rgba(15, 23, 42, 0.45);
+  @include m.dialog-backdrop;
 }
 
 .dialog-panel {
+  @include m.dialog-panel-surface;
+
   width: min(95vw, 480px);
   max-height: min(90vh, 720px);
   overflow: visible;
-  background: var(--app-card-bg);
-  border: 1px solid var(--app-border);
-  border-radius: 1rem;
-  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.24);
-  padding: 1.25rem;
 }
 
 .dialog-header {
@@ -32,8 +25,8 @@
 }
 
 .form {
-  display: grid;
-  gap: 1rem;
+  @include m.dialog-form(1rem);
+
   width: 100%;
 }
 
@@ -42,8 +35,7 @@ mat-form-field {
 }
 
 .dialog-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.75rem;
+  @include m.dialog-actions;
+
   margin-top: 0.5rem;
 }

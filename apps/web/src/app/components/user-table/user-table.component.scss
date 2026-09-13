@@ -1,3 +1,5 @@
+@use 'mixins' as m;
+
 th,
 td {
   white-space: nowrap;
@@ -35,44 +37,33 @@ td:nth-child(6) {
 }
 
 .actions-cell {
-  display: flex;
-  align-items: center;
-  gap: 0.2rem;
-  justify-content: center;
-  white-space: nowrap;
+  @include m.table-actions-cell;
 }
 
 .action-icon {
-  width: 20px;
-  height: 20px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  line-height: 20px;
-  vertical-align: middle;
+  @include m.action-icon;
 }
 
 .view-action {
-  color: #1565c0;
+  color: var(--app-tone-blue);
 }
 
 .edit-action {
-  color: #7b1fa2;
+  color: var(--app-tone-purple);
 }
 
 .danger-action {
-  color: #d32f2f;
+  color: var(--app-tone-red-accent);
 }
 
 .view-action:hover {
-  background: #e7f1fc;
+  background: var(--app-tone-blue-bg);
 }
 
 .edit-action:hover {
-  background: #f2e8f7;
+  background: var(--app-tone-purple-bg);
 }
 
 .danger-action:hover {
-  background: #fdecec;
+  background: var(--app-tone-red-bg);
 }

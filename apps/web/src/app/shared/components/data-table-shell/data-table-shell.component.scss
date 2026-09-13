@@ -1,15 +1,15 @@
+@use 'mixins' as m;
+
 :host {
   display: block;
 }
 
 .table-card {
+  @include m.surface-card;
+
   position: relative;
   overflow: hidden;
   padding: 0.5rem;
-  background: var(--app-card-bg);
-  border: 1px solid var(--app-border);
-  border-radius: 1rem;
-  box-shadow: 0 14px 36px rgba(24, 39, 75, 0.06);
 }
 
 .table-progress {
@@ -28,14 +28,14 @@
   width: 100%;
   table-layout: fixed;
   border-collapse: collapse;
-  background: #ffffff;
+  background: var(--app-card-bg);
 }
 
 :host ::ng-deep th,
 :host ::ng-deep td {
   height: 60px;
   padding: 0 1rem;
-  border-bottom: 1px solid #e4e9f2;
+  border-bottom: 1px solid var(--app-border-subtle);
   text-align: left;
 }
 
@@ -47,7 +47,7 @@
 }
 
 .mat-mdc-row {
-  background: #ffffff;
+  background: var(--app-card-bg);
   transition: background-color 140ms ease;
 }
 
@@ -61,16 +61,16 @@
 
 .empty-cell {
   height: 92px !important;
-  background: #ffffff;
+  background: var(--app-card-bg);
   text-align: center !important;
   color: var(--app-muted);
 }
 
 .state-row {
-  background: #ffffff !important;
+  background: var(--app-card-bg) !important;
 }
 
 mat-paginator {
-  border-top: 1px solid #e4e9f2;
-  background: #ffffff;
+  border-top: 1px solid var(--app-border-subtle);
+  background: var(--app-card-bg);
 }

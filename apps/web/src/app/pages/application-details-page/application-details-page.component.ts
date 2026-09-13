@@ -286,6 +286,12 @@ export class ApplicationDetailsPageComponent {
     return minimum && maximum ? `${minimum} – ${maximum}` : (minimum ?? maximum ?? 'Not specified');
   }
 
+  interviewTypeLabel(type: Interview['type']): string {
+    return type === 'hr'
+      ? 'HR'
+      : type.replaceAll('_', ' ').replace(/\b\w/g, (character) => character.toUpperCase());
+  }
+
   isLink(value: string | null): boolean {
     return /^https?:\/\//i.test(value ?? '');
   }

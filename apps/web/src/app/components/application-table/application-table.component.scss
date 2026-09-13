@@ -1,3 +1,5 @@
+@use 'mixins' as m;
+
 th,
 td {
   white-space: nowrap;
@@ -50,75 +52,65 @@ td:nth-child(7) {
 }
 
 .status-badge {
-  display: inline-flex;
-  align-items: center;
-  min-height: 26px;
-  padding: 0 0.65rem;
-  border-radius: 999px;
-  background: #edf2f7;
-  color: #475467;
-  font-size: 0.78rem;
-  font-weight: 700;
+  @include m.badge(26px);
+
+  background: var(--app-tone-neutral-bg);
+  color: var(--app-tone-neutral);
 }
 
 .status-applied {
-  background: #e7f1fc;
-  color: #1565c0;
+  background: var(--app-tone-blue-bg);
+  color: var(--app-tone-blue);
 }
 
 .status-interview {
-  background: #f2e8f7;
-  color: #7b1fa2;
+  background: var(--app-tone-purple-bg);
+  color: var(--app-tone-purple);
 }
 
 .status-offer {
-  background: #e8f5e9;
-  color: #237a3b;
+  background: var(--app-tone-green-bg);
+  color: var(--app-tone-green);
 }
 
-.status-rejected,
+.status-rejected {
+  background: var(--app-tone-red-bg);
+  color: var(--app-tone-red);
+}
+
 .status-withdrawn {
-  background: #fdecec;
-  color: #b42318;
+  background: var(--app-tone-brown-bg);
+  color: var(--app-tone-brown);
 }
 
 .actions-cell {
-  display: flex;
-  justify-content: center;
-  gap: 0.2rem;
+  @include m.table-actions-cell;
 }
 
 .action-icon {
-  width: 20px;
-  height: 20px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  line-height: 20px;
-  vertical-align: middle;
+  @include m.action-icon;
 }
 
 .view-action {
-  color: #1565c0;
+  color: var(--app-tone-blue);
 }
 
 .edit-action {
-  color: #7b1fa2;
+  color: var(--app-tone-purple);
 }
 
 .danger-action {
-  color: #d32f2f;
+  color: var(--app-tone-red-accent);
 }
 
 .view-action:hover {
-  background: #e7f1fc;
+  background: var(--app-tone-blue-bg);
 }
 
 .edit-action:hover {
-  background: #f2e8f7;
+  background: var(--app-tone-purple-bg);
 }
 
 .danger-action:hover {
-  background: #fdecec;
+  background: var(--app-tone-red-bg);
 }

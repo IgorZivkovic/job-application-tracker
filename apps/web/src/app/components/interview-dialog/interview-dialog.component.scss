@@ -1,53 +1,28 @@
+@use 'mixins' as m;
+
 :host {
   display: contents;
 }
 
 .dialog-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  display: grid;
-  place-items: center;
-  padding: 1rem;
-  background: rgba(15, 23, 42, 0.45);
+  @include m.dialog-backdrop;
 }
 
 .dialog-panel {
+  @include m.dialog-panel-surface;
+
   width: min(96vw, 720px);
   max-height: 92vh;
   overflow-y: auto;
   box-sizing: border-box;
-  padding: 1.25rem;
-  background: var(--app-card-bg);
-  border: 1px solid var(--app-border);
-  border-radius: 1rem;
-  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.24);
 }
 
 .dialog-header {
-  margin-bottom: 1rem;
-
-  h2,
-  p {
-    margin: 0;
-  }
-
-  h2 {
-    color: var(--app-text);
-    font-size: 1.35rem;
-  }
-
-  p {
-    margin-top: 0.35rem;
-    color: var(--app-muted);
-    line-height: 1.5;
-  }
+  @include m.dialog-header;
 }
 
 .form {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.75rem;
+  @include m.dialog-form(0.75rem, repeat(2, minmax(0, 1fr)));
 }
 
 .full-width {
@@ -55,9 +30,7 @@
 }
 
 .dialog-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.75rem;
+  @include m.dialog-actions;
 }
 
 @media (max-width: 640px) {

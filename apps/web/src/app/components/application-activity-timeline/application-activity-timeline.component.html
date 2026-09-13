@@ -2,18 +2,18 @@
   <header class="section-header">
     <div>
       <h2 id="activity-title">Application activity</h2>
-      <p>Status changes, interview updates, and dated follow-up notes.</p>
+      <p>Status changes, interview updates, and dated notes.</p>
     </div>
   </header>
 
   <form class="comment-form" (submit)="$event.preventDefault(); addComment()">
-    <label for="activity-comment">Add a follow-up note</label>
+    <label for="activity-comment">Add a timeline note</label>
     <div class="comment-controls">
       <textarea
         id="activity-comment"
         rows="3"
         maxlength="2000"
-        placeholder="For example: Sent a follow-up email and will check back on Friday."
+        placeholder="Examples:&#10;Sent a follow-up email and will check back on Friday.&#10;Submitted Angular / Frontend CV — Documents/Career/Resumes/Angular-Senior/CV.pdf."
         [value]="commentDraft()"
         [disabled]="commentSaving()"
         [attr.aria-invalid]="commentError() ? true : null"
@@ -57,7 +57,11 @@
     }
     <ol class="activity-list" aria-label="Application activity timeline">
       @for (activity of activities(); track activity.id) {
-        <li class="activity-item" [attr.data-activity-type]="activity.type">
+        <li
+          class="activity-item"
+          [attr.data-activity-type]="activity.type"
+          [attr.data-activity-tone]="activityTone(activity)"
+        >
           <span class="activity-icon" aria-hidden="true">
             <mat-icon fontSet="material-symbols-outlined">{{
               activityIcon(activity.type)

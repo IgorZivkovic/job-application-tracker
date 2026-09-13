@@ -1,4 +1,4 @@
-<main class="page">
+<main class="page application-details-page">
   <a mat-button class="back-link" routerLink="/applications">
     <mat-icon fontSet="material-symbols-outlined">arrow_back</mat-icon>
     Back to applications
@@ -117,7 +117,9 @@
                 <article class="interview-item upcoming-item">
                   <div class="interview-main">
                     <div class="interview-heading">
-                      <span class="type-badge">{{ interview.type | titlecase }}</span>
+                      <span [class]="'type-badge type-' + interview.type">{{
+                        interviewTypeLabel(interview.type)
+                      }}</span>
                       <strong>{{ interview.scheduled_at | date: 'MMM d, y, h:mm a' }}</strong>
                     </div>
                     @if (interview.contact_name || interview.contact_email) {
@@ -189,7 +191,9 @@
                 <article class="interview-item completed-item">
                   <div class="interview-main">
                     <div class="interview-heading">
-                      <span class="type-badge">{{ interview.type | titlecase }}</span>
+                      <span [class]="'type-badge type-' + interview.type">{{
+                        interviewTypeLabel(interview.type)
+                      }}</span>
                       <strong>{{ interview.scheduled_at | date: 'MMM d, y, h:mm a' }}</strong>
                       <span
                         class="outcome-badge"
