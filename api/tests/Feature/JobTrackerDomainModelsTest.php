@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use App\Enums\InterviewOutcome;
 use App\Enums\InterviewType;
+use App\Enums\ApplicationActivityType;
+use App\Models\ApplicationActivity;
 use App\Enums\JobApplicationStatus;
 use App\Enums\WorkMode;
 use App\Models\AuthUser;
@@ -23,6 +25,13 @@ class JobTrackerDomainModelsTest extends TestCase
         $company = Company::factory()->for($account)->create();
         $application = JobApplication::factory()->for($company)->create();
         $interview = Interview::factory()->for($application)->create();
+        $activity = $application->activities()->create([
+            'actor_auth_user_id' => $account->id,
+            'type' => 'comment_added',
+            'comment' => 'Followed up.',
+            'metadata' => ['channel' => 'email'],
+            'occurred_at' => '2026-09-13 10:00:00',
+        ]);
 
         $this->assertTrue($account->companies->firstOrFail()->is($company));
         $this->assertTrue($company->authUser->is($account));
@@ -30,6 +39,13 @@ class JobTrackerDomainModelsTest extends TestCase
         $this->assertTrue($application->company->is($company));
         $this->assertTrue($application->interviews->firstOrFail()->is($interview));
         $this->assertTrue($interview->jobApplication->is($application));
+        $this->assertTrue($application->activities->firstOrFail()->is($activity));
+        $this->assertTrue($activity->jobApplication->is($application));
+        $this->assertTrue($activity->actor->is($account));
+        $this->assertTrue($account->applicationActivities->firstOrFail()->is($activity));
+        $this->assertSame(ApplicationActivityType::CommentAdded, $activity->type);
+        $this->assertSame(['channel' => 'email'], $activity->metadata);
+        $this->assertInstanceOf(ApplicationActivity::class, $activity);
     }
 
     public function test_job_application_casts_domain_values(): void

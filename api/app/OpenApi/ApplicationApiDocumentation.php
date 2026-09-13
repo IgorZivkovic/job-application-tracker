@@ -46,6 +46,7 @@ final class ApplicationApiDocumentation implements DocumentTransformer
             new Tag('Dashboard', 'Account-scoped Job Tracker summaries.'),
             new Tag('Companies', 'Companies owned by the authenticated account.'),
             new Tag('Job Applications', 'Private job application tracking and search.'),
+            new Tag('Application Activities', 'Immutable application history and manual timeline comments.'),
             new Tag('Interviews', 'Interview scheduling within an owned job application.'),
             new Tag('Users', 'Authenticated user directory operations with role-based writes.'),
         ];
@@ -116,6 +117,7 @@ final class ApplicationApiDocumentation implements DocumentTransformer
             $path === 'sanctum/csrf-cookie', str_starts_with($path, 'api/v1/auth/') => 'Authentication',
             $path === 'api/v1/dashboard' => 'Dashboard',
             str_starts_with($path, 'api/v1/companies') => 'Companies',
+            str_contains($path, '/activities') => 'Application Activities',
             str_contains($path, '/interviews') => 'Interviews',
             str_starts_with($path, 'api/v1/job-applications') => 'Job Applications',
             default => 'Users',
@@ -194,7 +196,13 @@ final class ApplicationApiDocumentation implements DocumentTransformer
         }
 
         if (str_starts_with($path, 'api/v1/job-applications')) {
-            if (str_contains($path, '/interviews')) {
+            if (str_contains($path, '/activities')) {
+                $statuses[] = 404;
+
+                if ($method === 'post') {
+                    $statuses[] = 422;
+                }
+            } elseif (str_contains($path, '/interviews')) {
                 $statuses[] = 404;
 
                 if (in_array($method, ['post', 'put', 'patch'], true)) {

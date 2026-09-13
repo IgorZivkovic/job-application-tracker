@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\ApplicationActivityType;
 use App\Enums\InterviewOutcome;
 use App\Enums\InterviewType;
 use App\Enums\JobApplicationStatus;
@@ -45,14 +46,52 @@ class JobTrackerSeeder extends Seeder
                         $applicationData,
                     );
 
+                    if (! $application->activities()->exists()) {
+                        $type = $application->wasRecentlyCreated
+                            ? ApplicationActivityType::ApplicationCreated
+                            : ApplicationActivityType::TrackingStarted;
+
+                        $application->activities()->create([
+                            'actor_auth_user_id' => null,
+                            'type' => $type,
+                            'comment' => null,
+                            'metadata' => $type === ApplicationActivityType::ApplicationCreated ? [
+                                'application' => [
+                                    'company' => ['id' => $company->id, 'name' => $company->name],
+                                    'position' => $application->position,
+                                    'status' => $application->status->value,
+                                ],
+                            ] : null,
+                            'occurred_at' => $application->applied_at
+                                ?? now()->setDate(2026, 9, 1)->startOfDay()->addMinutes($application->id),
+                        ]);
+                    }
+
                     foreach ($interviews as $interviewData) {
-                        $application->interviews()->firstOrCreate(
+                        $interview = $application->interviews()->firstOrCreate(
                             [
                                 'type' => $interviewData['type'],
                                 'scheduled_at' => $interviewData['scheduled_at'],
                             ],
                             $interviewData,
                         );
+
+                        if ($interview->wasRecentlyCreated) {
+                            $application->activities()->create([
+                                'actor_auth_user_id' => null,
+                                'type' => ApplicationActivityType::InterviewScheduled,
+                                'comment' => null,
+                                'metadata' => [
+                                    'interview' => [
+                                        'id' => $interview->id,
+                                        'type' => $interview->type->value,
+                                        'scheduled_at' => $interview->scheduled_at->toISOString(),
+                                        'outcome' => $interview->outcome?->value,
+                                    ],
+                                ],
+                                'occurred_at' => $interview->scheduled_at->copy()->subWeek(),
+                            ]);
+                        }
                     }
                 }
             }

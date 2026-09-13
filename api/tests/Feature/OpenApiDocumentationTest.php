@@ -35,6 +35,7 @@ class OpenApiDocumentationTest extends TestCase
             '/api/v1/companies/{company}' => ['get', 'put', 'patch', 'delete'],
             '/api/v1/job-applications' => ['get', 'post'],
             '/api/v1/job-applications/{jobApplication}' => ['get', 'put', 'patch', 'delete'],
+            '/api/v1/job-applications/{jobApplication}/activities' => ['get', 'post'],
             '/api/v1/job-applications/{jobApplication}/interviews' => ['get', 'post'],
             '/api/v1/job-applications/{jobApplication}/interviews/{interview}' => [
                 'put',
@@ -65,6 +66,10 @@ class OpenApiDocumentationTest extends TestCase
         $this->assertArrayHasKey(
             '201',
             $specification['paths']['/api/v1/job-applications/{jobApplication}/interviews']['post']['responses'],
+        );
+        $this->assertArrayHasKey(
+            '201',
+            $specification['paths']['/api/v1/job-applications/{jobApplication}/activities']['post']['responses'],
         );
         $this->assertArrayHasKey('200', $specification['paths']['/api/v1/dashboard']['get']['responses']);
 
@@ -168,6 +173,11 @@ class OpenApiDocumentationTest extends TestCase
             $paths['/api/v1/job-applications/{jobApplication}/interviews']['post']
                 ['requestBody']['content']['application/json']['schema'],
         ), JSON_THROW_ON_ERROR);
+        $activityCommentRequest = json_encode($this->resolveSchemaReference(
+            $specification,
+            $paths['/api/v1/job-applications/{jobApplication}/activities']['post']
+                ['requestBody']['content']['application/json']['schema'],
+        ), JSON_THROW_ON_ERROR);
         $dashboardEnvelope = $this->resolveSchemaReference(
             $specification,
             $paths['/api/v1/dashboard']['get']['responses']['200']
@@ -185,6 +195,9 @@ class OpenApiDocumentationTest extends TestCase
         foreach (['type', 'scheduled_at', 'contact_email', 'outcome'] as $field) {
             $this->assertStringContainsString($field, $interviewRequest);
         }
+
+        $this->assertStringContainsString('comment', $activityCommentRequest);
+        $this->assertStringNotContainsString('actor_auth_user_id', $activityCommentRequest);
 
         foreach (
             ['total_applications', 'applications_by_status', 'recent_applications', 'upcoming_interviews']
@@ -204,6 +217,10 @@ class OpenApiDocumentationTest extends TestCase
         $this->assertSame(
             ['Interviews'],
             $paths['/api/v1/job-applications/{jobApplication}/interviews']['get']['tags'],
+        );
+        $this->assertSame(
+            ['Application Activities'],
+            $paths['/api/v1/job-applications/{jobApplication}/activities']['get']['tags'],
         );
         $this->assertSame(
             ['Dashboard'],

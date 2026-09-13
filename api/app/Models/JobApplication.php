@@ -47,6 +47,11 @@ class JobApplication extends Model
         return $this->hasMany(Interview::class);
     }
 
+    public function activities(): HasMany
+    {
+        return $this->hasMany(ApplicationActivity::class);
+    }
+
     /**
      * @return array<string, string>
      */

@@ -19,6 +19,7 @@ class DatabaseSeederTest extends TestCase
         $this->assertDatabaseCount('companies', 15);
         $this->assertDatabaseCount('job_applications', 26);
         $this->assertDatabaseCount('interviews', 12);
+        $this->assertDatabaseCount('application_activities', 38);
 
         $admin = AuthUser::query()->where('email', 'admin@example.com')->firstOrFail();
         $viewer = AuthUser::query()->where('email', 'viewer@example.com')->firstOrFail();
@@ -93,6 +94,7 @@ class DatabaseSeederTest extends TestCase
             'companies' => $this->rowsWithoutTimestamps('companies'),
             'job_applications' => $this->rowsWithoutTimestamps('job_applications'),
             'interviews' => $this->rowsWithoutTimestamps('interviews'),
+            'application_activities' => $this->rowsWithoutTimestamps('application_activities'),
         ];
     }
 

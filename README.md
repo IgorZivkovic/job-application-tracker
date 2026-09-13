@@ -192,7 +192,7 @@ Job Tracker list filters, sorting, and pagination are represented in URL query p
 
 - **AuthUser** owns companies and provides the authenticated account boundary.
 - **Company** belongs to one account and has many job applications. A company with applications cannot be deleted.
-- **JobApplication** belongs to a company, stores pipeline/work-mode details, and has many interviews. Deleting it also deletes its interviews.
+- **JobApplication** belongs to a company, stores pipeline/work-mode details, and has many interviews and immutable activity records. Deleting it also deletes its interviews and timeline.
 - **Interview** belongs to a job application and stores type, schedule, contact details, notes, and an optional outcome.
 - **User** is the independent record used by the original administrative showcase; it is not an authentication identity.
 
@@ -229,6 +229,7 @@ All REST endpoints use the `/api/v1` prefix except Sanctum's CSRF endpoint.
 | `GET/POST`             | `/api/v1/job-applications`                                          | List/filter or create owned applications  |
 | `GET/PUT/PATCH/DELETE` | `/api/v1/job-applications/{job_application}`                        | Manage an owned application               |
 | `PATCH`                | `/api/v1/job-applications/{job_application}/move`                   | Reorder or change an application status   |
+| `GET/POST`             | `/api/v1/job-applications/{job_application}/activities`             | List activity history or add a manual comment |
 | `GET/POST`             | `/api/v1/job-applications/{job_application}/interviews`             | List or schedule interviews               |
 | `PUT/PATCH/DELETE`     | `/api/v1/job-applications/{job_application}/interviews/{interview}` | Update or remove an interview             |
 | `GET/POST`             | `/api/v1/users`                                                     | List users; administrator creates         |

@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateJobApplicationRequest;
 use App\Http\Resources\JobApplicationResource;
 use App\Models\AuthUser;
 use App\Models\JobApplication;
+use App\Services\ApplicationActivityRecorder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -18,6 +19,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class JobApplicationController extends Controller
 {
+    public function __construct(private readonly ApplicationActivityRecorder $activityRecorder) {}
+
     /**
      * List owned job applications.
      *
@@ -93,8 +96,13 @@ class JobApplicationController extends Controller
             $this->lockBoard($authUser);
             $company = $authUser->companies()->findOrFail($companyId);
             $data['board_order'] = $this->nextBoardOrder($authUser, $data['status']);
+            $application = $company->jobApplications()->create($data);
+            $this->activityRecorder->recordApplicationCreated(
+                $application->load('company:id,name'),
+                $authUser,
+            );
 
-            return $company->jobApplications()->create($data);
+            return $application;
         });
 
         return (new JobApplicationResource($application->load('company:id,name')))
@@ -117,6 +125,7 @@ class JobApplicationController extends Controller
 
         DB::transaction(function () use ($authUser, $data, $jobApplication): void {
             $this->lockBoard($authUser);
+            $before = $this->activityRecorder->applicationSnapshot($jobApplication);
             $sourceStatus = $jobApplication->status->value;
             $targetStatus = $data['status'] ?? $sourceStatus;
 
@@ -140,11 +149,12 @@ class JobApplicationController extends Controller
 
                 $this->reindexBoard($sourceIds);
                 $this->reindexBoard($targetIds);
-
-                return;
+            } else {
+                $jobApplication->fill($data)->save();
             }
 
-            $jobApplication->fill($data)->save();
+            $jobApplication->refresh()->load('company:id,name');
+            $this->activityRecorder->recordApplicationChanges($jobApplication, $authUser, $before);
         });
 
         return new JobApplicationResource(
@@ -186,6 +196,12 @@ class JobApplicationController extends Controller
                 $jobApplication->board_order = $targetIndex + 1;
                 $jobApplication->save();
                 $this->reindexBoard($sourceIds);
+                $this->activityRecorder->recordStatusChanged(
+                    $jobApplication,
+                    $authUser,
+                    $sourceStatus,
+                    $targetStatus,
+                );
             }
 
             $this->reindexBoard($targetIds);

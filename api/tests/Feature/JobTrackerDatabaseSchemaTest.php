@@ -54,6 +54,15 @@ class JobTrackerDatabaseSchemaTest extends TestCase
             'created_at',
             'updated_at',
         ]));
+        $this->assertTrue(Schema::hasColumns('application_activities', [
+            'id',
+            'job_application_id',
+            'actor_auth_user_id',
+            'type',
+            'comment',
+            'metadata',
+            'occurred_at',
+        ]));
     }
 
     public function test_company_names_are_unique_per_account(): void
@@ -104,12 +113,14 @@ class JobTrackerDatabaseSchemaTest extends TestCase
         $this->assertFalse(Schema::hasTable('companies'));
         $this->assertFalse(Schema::hasTable('job_applications'));
         $this->assertFalse(Schema::hasTable('interviews'));
+        $this->assertFalse(Schema::hasTable('application_activities'));
 
         $this->artisan('migrate')->assertSuccessful();
 
         $this->assertTrue(Schema::hasTable('companies'));
         $this->assertTrue(Schema::hasTable('job_applications'));
         $this->assertTrue(Schema::hasTable('interviews'));
+        $this->assertTrue(Schema::hasTable('application_activities'));
     }
 
     private function insertApplicationFixture(): array
