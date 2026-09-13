@@ -11,6 +11,7 @@ A portfolio-oriented full-stack application for organizing companies, job applic
 - Dashboard totals, recent applications, upcoming interviews, and a persistent drag-and-drop Kanban board
 - Server-side search, filtering, whitelisted sorting, and Laravel pagination
 - URL-backed list state, so filters and pages survive a browser refresh
+- Immutable application activity timeline with status, interview, and manual follow-up history
 - Structured request validation and consistent API error responses
 - Responsive Angular Material interface with loading, empty, and retry states
 - OpenAPI documentation and automated frontend/backend tests
@@ -24,15 +25,15 @@ A portfolio-oriented full-stack application for organizing companies, job applic
 
 ### Persistent Kanban drag and drop
 
-![Application card being dragged to an exact position in another pipeline column](docs/screenshots/dashboard-drag-and-drop.png)
+![Application card being dragged to an exact position in another pipeline column](docs/screenshots/kanban-drag-and-drop.gif)
 
 ### Application search and filters
 
 ![Applications page with server-side filters, sorting, pagination, and status badges](docs/screenshots/applications.png)
 
-### Application and interview details
+### Application details, activity, and interviews
 
-![Application details page with an upcoming technical interview and completed screening history](docs/screenshots/application-details.png)
+![Application details page with an activity timeline, follow-up notes, status changes, and completed interviews](docs/screenshots/application-details.png)
 
 ## Tech stack
 
@@ -183,7 +184,7 @@ The `users` rows are not login accounts and are intentionally independent from `
    Drag a card within a column or into another status to persist its exact board position.
 3. Add companies before creating applications associated with them.
 4. Search or filter applications by status, work mode, or company, and sort supported columns.
-5. Open an application to update its details and schedule, edit, or remove interviews.
+5. Open an application to review its activity timeline, add follow-up comments, and schedule, edit, or remove interviews.
 6. Use the Users page to inspect the original demonstration module; only the administrator can mutate those records.
 
 Job Tracker list filters, sorting, and pagination are represented in URL query parameters, so refreshing or sharing a list URL preserves the current view.
@@ -216,24 +217,24 @@ Authenticated feature routes are lazy-loaded by Angular.
 
 All REST endpoints use the `/api/v1` prefix except Sanctum's CSRF endpoint.
 
-| Method                 | Endpoint                                                            | Access and purpose                        |
-| ---------------------- | ------------------------------------------------------------------- | ----------------------------------------- |
-| `GET`                  | `/sanctum/csrf-cookie`                                              | Public; initialize the SPA CSRF cookie    |
-| `GET`                  | `/api/v1/health`                                                    | Public health check                       |
-| `POST`                 | `/api/v1/auth/login`                                                | Public login                              |
-| `POST`                 | `/api/v1/auth/logout`                                               | Authenticated logout                      |
-| `GET`                  | `/api/v1/auth/me`                                                   | Restore/read the authenticated session    |
-| `GET`                  | `/api/v1/dashboard`                                                 | Account-scoped dashboard summary          |
-| `GET/POST`             | `/api/v1/companies`                                                 | List/search or create owned companies     |
-| `GET/PUT/PATCH/DELETE` | `/api/v1/companies/{company}`                                       | Manage an owned company                   |
-| `GET/POST`             | `/api/v1/job-applications`                                          | List/filter or create owned applications  |
-| `GET/PUT/PATCH/DELETE` | `/api/v1/job-applications/{job_application}`                        | Manage an owned application               |
-| `PATCH`                | `/api/v1/job-applications/{job_application}/move`                   | Reorder or change an application status   |
+| Method                 | Endpoint                                                            | Access and purpose                            |
+| ---------------------- | ------------------------------------------------------------------- | --------------------------------------------- |
+| `GET`                  | `/sanctum/csrf-cookie`                                              | Public; initialize the SPA CSRF cookie        |
+| `GET`                  | `/api/v1/health`                                                    | Public health check                           |
+| `POST`                 | `/api/v1/auth/login`                                                | Public login                                  |
+| `POST`                 | `/api/v1/auth/logout`                                               | Authenticated logout                          |
+| `GET`                  | `/api/v1/auth/me`                                                   | Restore/read the authenticated session        |
+| `GET`                  | `/api/v1/dashboard`                                                 | Account-scoped dashboard summary              |
+| `GET/POST`             | `/api/v1/companies`                                                 | List/search or create owned companies         |
+| `GET/PUT/PATCH/DELETE` | `/api/v1/companies/{company}`                                       | Manage an owned company                       |
+| `GET/POST`             | `/api/v1/job-applications`                                          | List/filter or create owned applications      |
+| `GET/PUT/PATCH/DELETE` | `/api/v1/job-applications/{job_application}`                        | Manage an owned application                   |
+| `PATCH`                | `/api/v1/job-applications/{job_application}/move`                   | Reorder or change an application status       |
 | `GET/POST`             | `/api/v1/job-applications/{job_application}/activities`             | List activity history or add a manual comment |
-| `GET/POST`             | `/api/v1/job-applications/{job_application}/interviews`             | List or schedule interviews               |
-| `PUT/PATCH/DELETE`     | `/api/v1/job-applications/{job_application}/interviews/{interview}` | Update or remove an interview             |
-| `GET/POST`             | `/api/v1/users`                                                     | List users; administrator creates         |
-| `GET/PUT/PATCH/DELETE` | `/api/v1/users/{user}`                                              | Read users; administrator updates/deletes |
+| `GET/POST`             | `/api/v1/job-applications/{job_application}/interviews`             | List or schedule interviews                   |
+| `PUT/PATCH/DELETE`     | `/api/v1/job-applications/{job_application}/interviews/{interview}` | Update or remove an interview                 |
+| `GET/POST`             | `/api/v1/users`                                                     | List users; administrator creates             |
+| `GET/PUT/PATCH/DELETE` | `/api/v1/users/{user}`                                              | Read users; administrator updates/deletes     |
 
 Example application query:
 

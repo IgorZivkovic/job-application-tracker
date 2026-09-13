@@ -1,4 +1,5 @@
 export {
+  APPLICATION_ACTIVITY_TYPES,
   INTERVIEW_OUTCOMES,
   INTERVIEW_TYPES,
   JOB_APPLICATION_SORT_FIELDS,
@@ -8,6 +9,11 @@ export {
 } from '@shared';
 
 export type {
+  ApplicationActivity,
+  ApplicationActivityActor,
+  ApplicationActivityChange,
+  ApplicationActivityChanges,
+  ApplicationActivityType,
   Company,
   CompanyFilters,
   CompanyPayload,

@@ -19,7 +19,7 @@ class DatabaseSeederTest extends TestCase
         $this->assertDatabaseCount('companies', 15);
         $this->assertDatabaseCount('job_applications', 26);
         $this->assertDatabaseCount('interviews', 12);
-        $this->assertDatabaseCount('application_activities', 38);
+        $this->assertDatabaseCount('application_activities', 50);
 
         $admin = AuthUser::query()->where('email', 'admin@example.com')->firstOrFail();
         $viewer = AuthUser::query()->where('email', 'viewer@example.com')->firstOrFail();

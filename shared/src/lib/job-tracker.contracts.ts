@@ -13,6 +13,19 @@ export const INTERVIEW_TYPES = ['screening', 'technical', 'hr', 'final'] as cons
 
 export const INTERVIEW_OUTCOMES = ['passed', 'failed', 'cancelled'] as const;
 
+export const APPLICATION_ACTIVITY_TYPES = [
+  'tracking_started',
+  'application_created',
+  'status_changed',
+  'application_updated',
+  'interview_scheduled',
+  'interview_rescheduled',
+  'interview_outcome_recorded',
+  'interview_updated',
+  'interview_deleted',
+  'comment_added',
+] as const;
+
 export const JOB_APPLICATION_SORT_FIELDS = [
   'position',
   'status',
@@ -29,6 +42,7 @@ export type JobApplicationStatus = (typeof JOB_APPLICATION_STATUSES)[number];
 export type WorkMode = (typeof WORK_MODES)[number];
 export type InterviewType = (typeof INTERVIEW_TYPES)[number];
 export type InterviewOutcome = (typeof INTERVIEW_OUTCOMES)[number];
+export type ApplicationActivityType = (typeof APPLICATION_ACTIVITY_TYPES)[number];
 export type JobApplicationSortField = (typeof JOB_APPLICATION_SORT_FIELDS)[number];
 export type SortDirection = (typeof SORT_DIRECTIONS)[number];
 
@@ -77,6 +91,85 @@ export interface Interview {
   created_at: string;
   updated_at: string;
 }
+
+export interface ApplicationActivityActor {
+  id: number;
+  email: string;
+}
+
+export type ApplicationActivityValue = string | number | boolean | null | CompanySummary;
+
+export interface ApplicationActivityChange {
+  from: ApplicationActivityValue;
+  to: ApplicationActivityValue;
+}
+
+export type ApplicationActivityChanges = Record<string, ApplicationActivityChange>;
+
+interface ApplicationActivityBase<TType extends ApplicationActivityType, TMetadata> {
+  id: number;
+  job_application_id: number;
+  type: TType;
+  metadata: TMetadata;
+  actor: ApplicationActivityActor | null;
+  occurred_at: string;
+}
+
+interface InterviewActivitySummary {
+  id: number;
+  type: InterviewType;
+  scheduled_at: string;
+  outcome: InterviewOutcome | null;
+}
+
+export type ApplicationActivity =
+  | (ApplicationActivityBase<'tracking_started', null> & { comment: null })
+  | (ApplicationActivityBase<
+      'application_created',
+      {
+        application: {
+          company: CompanySummary;
+          position: string;
+          status: JobApplicationStatus;
+        };
+      }
+    > & { comment: null })
+  | (ApplicationActivityBase<
+      'status_changed',
+      { from_status: JobApplicationStatus; to_status: JobApplicationStatus }
+    > & { comment: null })
+  | (ApplicationActivityBase<'application_updated', { changes: ApplicationActivityChanges }> & {
+      comment: null;
+    })
+  | (ApplicationActivityBase<'interview_scheduled', { interview: InterviewActivitySummary }> & {
+      comment: null;
+    })
+  | (ApplicationActivityBase<
+      'interview_rescheduled',
+      {
+        interview_id: number;
+        interview_type: InterviewType;
+        from_scheduled_at: string;
+        to_scheduled_at: string;
+      }
+    > & { comment: null })
+  | (ApplicationActivityBase<
+      'interview_outcome_recorded',
+      {
+        interview_id: number;
+        interview_type: InterviewType;
+        from_outcome: InterviewOutcome | null;
+        to_outcome: InterviewOutcome | null;
+      }
+    > & { comment: null })
+  | (ApplicationActivityBase<
+      'interview_updated',
+      { interview_id: number; changes: ApplicationActivityChanges }
+    > & { comment: null })
+  | (ApplicationActivityBase<'interview_deleted', { interview: InterviewActivitySummary }> & {
+      comment: null;
+    })
+  | (ApplicationActivityBase<'comment_added', null> & { comment: string });
 
 export interface JobApplicationDetail extends JobApplication {
   interviews: Interview[];

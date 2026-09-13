@@ -59,7 +59,9 @@ class JobTrackerSeeder extends Seeder
                                 'application' => [
                                     'company' => ['id' => $company->id, 'name' => $company->name],
                                     'position' => $application->position,
-                                    'status' => $application->status->value,
+                                    'status' => $application->applied_at === null
+                                        ? JobApplicationStatus::Saved->value
+                                        : JobApplicationStatus::Applied->value,
                                 ],
                             ] : null,
                             'occurred_at' => $application->applied_at
@@ -76,10 +78,13 @@ class JobTrackerSeeder extends Seeder
                             $interviewData,
                         );
 
-                        if ($interview->wasRecentlyCreated) {
-                            $application->activities()->create([
-                                'actor_auth_user_id' => null,
+                        $application->activities()->firstOrCreate(
+                            [
                                 'type' => ApplicationActivityType::InterviewScheduled,
+                                'occurred_at' => $interview->scheduled_at->copy()->subWeek(),
+                            ],
+                            [
+                                'actor_auth_user_id' => null,
                                 'comment' => null,
                                 'metadata' => [
                                     'interview' => [
@@ -89,15 +94,145 @@ class JobTrackerSeeder extends Seeder
                                         'outcome' => $interview->outcome?->value,
                                     ],
                                 ],
-                                'occurred_at' => $interview->scheduled_at->copy()->subWeek(),
-                            ]);
-                        }
+                            ],
+                        );
                     }
+
+                    $this->seedDemoActivities($application, $account, $company->name);
                 }
             }
 
             $this->normalizeBoardOrder($account);
         }
+    }
+
+    private function seedDemoActivities(
+        JobApplication $application,
+        AuthUser $account,
+        string $companyName,
+    ): void {
+        $activityData = $this->demoActivities()["{$companyName}|{$application->position}"] ?? [];
+
+        foreach ($activityData as $activity) {
+            $metadata = $activity['metadata'] ?? null;
+            $interviewType = $activity['interview_type'] ?? null;
+
+            if ($interviewType !== null) {
+                $interview = $application->interviews()
+                    ->where('type', $interviewType)
+                    ->firstOrFail();
+
+                $metadata = [
+                    'interview_id' => $interview->id,
+                    'interview_type' => $interview->type->value,
+                    ...$metadata,
+                ];
+            }
+
+            $application->activities()->firstOrCreate(
+                [
+                    'type' => $activity['type'],
+                    'occurred_at' => $activity['occurred_at'],
+                ],
+                [
+                    'actor_auth_user_id' => $account->id,
+                    'comment' => $activity['comment'] ?? null,
+                    'metadata' => $metadata,
+                ],
+            );
+        }
+    }
+
+    /**
+     * Deterministic activity histories keep demo data repeatable while making
+     * the timeline useful during development and in project screenshots.
+     *
+     * @return array<string, array<int, array<string, mixed>>>
+     */
+    private function demoActivities(): array
+    {
+        return [
+            'Ember Commerce|Senior Full-stack Engineer' => [
+                [
+                    'type' => ApplicationActivityType::CommentAdded,
+                    'comment' => 'Recruiter confirmed that the team is reviewing my application this week.',
+                    'occurred_at' => '2026-08-03 09:20:00',
+                ],
+                [
+                    'type' => ApplicationActivityType::InterviewOutcomeRecorded,
+                    'interview_type' => InterviewType::Technical,
+                    'metadata' => ['from_outcome' => null, 'to_outcome' => InterviewOutcome::Passed->value],
+                    'occurred_at' => '2026-08-12 15:10:00',
+                ],
+                [
+                    'type' => ApplicationActivityType::StatusChanged,
+                    'metadata' => [
+                        'from_status' => JobApplicationStatus::Applied->value,
+                        'to_status' => JobApplicationStatus::Interview->value,
+                    ],
+                    'occurred_at' => '2026-08-13 10:15:00',
+                ],
+                [
+                    'type' => ApplicationActivityType::CommentAdded,
+                    'comment' => 'Sent the requested architecture sample before the final interview.',
+                    'occurred_at' => '2026-08-21 11:40:00',
+                ],
+                [
+                    'type' => ApplicationActivityType::InterviewOutcomeRecorded,
+                    'interview_type' => InterviewType::Final,
+                    'metadata' => ['from_outcome' => null, 'to_outcome' => InterviewOutcome::Passed->value],
+                    'occurred_at' => '2026-08-26 17:05:00',
+                ],
+                [
+                    'type' => ApplicationActivityType::StatusChanged,
+                    'metadata' => [
+                        'from_status' => JobApplicationStatus::Interview->value,
+                        'to_status' => JobApplicationStatus::Offer->value,
+                    ],
+                    'occurred_at' => '2026-08-27 09:30:00',
+                ],
+                [
+                    'type' => ApplicationActivityType::CommentAdded,
+                    'comment' => 'Offer received. Comparing benefits and preparing questions about the on-call rotation.',
+                    'occurred_at' => '2026-09-02 14:25:00',
+                ],
+            ],
+            'Harbor Financial|Web Application Engineer' => [
+                [
+                    'type' => ApplicationActivityType::CommentAdded,
+                    'comment' => 'Recruiter shared the interview agenda and the names of the two engineers joining the call.',
+                    'occurred_at' => '2026-09-02 16:15:00',
+                ],
+                [
+                    'type' => ApplicationActivityType::InterviewOutcomeRecorded,
+                    'interview_type' => InterviewType::Screening,
+                    'metadata' => ['from_outcome' => null, 'to_outcome' => InterviewOutcome::Passed->value],
+                    'occurred_at' => '2026-09-04 10:20:00',
+                ],
+                [
+                    'type' => ApplicationActivityType::StatusChanged,
+                    'metadata' => [
+                        'from_status' => JobApplicationStatus::Applied->value,
+                        'to_status' => JobApplicationStatus::Interview->value,
+                    ],
+                    'occurred_at' => '2026-09-04 10:30:00',
+                ],
+            ],
+            'BrightPeak Software|Angular Platform Engineer' => [
+                [
+                    'type' => ApplicationActivityType::CommentAdded,
+                    'comment' => 'Sent a short follow-up with links to the design-system and migration case studies.',
+                    'occurred_at' => '2026-09-12 09:10:00',
+                ],
+            ],
+            'Northstar Labs|Senior Angular Developer' => [
+                [
+                    'type' => ApplicationActivityType::CommentAdded,
+                    'comment' => 'Follow up on Friday if there is no update from the hiring team.',
+                    'occurred_at' => '2026-09-11 13:45:00',
+                ],
+            ],
+        ];
     }
 
     private function normalizeBoardOrder(AuthUser $account): void
